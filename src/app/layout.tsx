@@ -1,4 +1,5 @@
-import "~/styles/globals.css";
+// app/layout.tsx
+import "../styles/globals.css"; // Adjusted import path for TypeScript
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
@@ -11,10 +12,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <head></head>
+      <head>
+        {/* You can add meta tags or links here if needed */}
+      </head>
       <body>{children}</body>
     </html>
   );
