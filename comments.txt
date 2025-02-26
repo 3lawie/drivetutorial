@@ -1,0 +1,5 @@
+- time: 26:30
+- gitconfig setup:
+[push]
+ autoSetupRemote = true
+ default= current
