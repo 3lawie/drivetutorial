@@ -4,9 +4,6 @@ import { env } from "~/env";
 
 export default {
   schema: "./src/server/db/schema.ts",
-  dialect: "sqlite",
-  dbCredentials: {
-    url: env.DATABASE_URL,
-  },
+  dialect: "singlestore",
   tablesFilter: ["drivetutorial_*"],
 } satisfies Config;

@@ -3,3 +3,13 @@
 [push]
  autoSetupRemote = true
  default= current
+
+
+-----
+declare module "drizzle-kit" {
+  interface Config {
+    dialect: "postgresql" | "mysql" | "sqlite" | "singlestore";
+    schema: string; // Add schema as a valid property
+  }
+}
+-------

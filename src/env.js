@@ -1,37 +1,45 @@
+// Import required dependencies
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+/*
+ * createEnv: A utility function from the T3 stack that creates a type-safe environment configuration
+ * z: Zod library for schema validation with TypeScript integration
+ */
+
 export const env = createEnv({
-  /**
-   * Specify your server-side environment variables schema here. This way you can ensure the app
-   * isn't built with invalid env vars.
-   */
+  // Server-side Environment Configuration
   server: {
+    // Database connection URL - Must be a valid URL format
     DATABASE_URL: z.string().url(),
+    
+    // Application environment setting
+    // Restricts values to only: "development", "test", or "production"
+    // Defaults to "development" if not specified
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    SINGLESTORE_USER: z.string(),
-    SINGLESTORE_PASS: z.string(),
-    SINGLESTORE_HOST: z.string().url(),
-    SINGLESTORE_PORT: z.string(),
-    SINGLESTORE_DB_NAME: z.string(),
+    
+    // SingleStore Database Credentials
+    // All these fields are required strings
+    SINGLESTORE_USER: z.string(),     // Database username
+    SINGLESTORE_PASS: z.string(),     // Database password
+    SINGLESTORE_HOST: z.string().url(), // Database host (must be valid URL)
+    SINGLESTORE_PORT: z.string(),     // Database port number
+    SINGLESTORE_DB_NAME: z.string(),  // Database name
   },
 
-  /**
-   * Specify your client-side environment variables schema here. This way you can ensure the app
-   * isn't built with invalid env vars. To expose them to the client, prefix them with
-   * `NEXT_PUBLIC_`.
-   */
+  // Client-side Environment Configuration
   client: {
+    // Client-side variables must be prefixed with NEXT_PUBLIC_
+    // Example (currently commented out):
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
   },
 
-  /**
-   * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
-   * middlewares) or client-side so we need to destruct manually.
-   */
+  // Runtime Environment Mapping
+  // Maps schema definitions to actual process.env values
   runtimeEnv: {
+    // Maps each environment variable to its process.env equivalent
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     SINGLESTORE_USER: process.env.SINGLESTORE_USER,
@@ -40,16 +48,11 @@ export const env = createEnv({
     SINGLESTORE_PORT: process.env.SINGLESTORE_PORT,
     SINGLESTORE_DB_NAME: process.env.SINGLESTORE_DB_NAME,
     
+    // Example of client-side variable mapping (commented out)
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
-  /**
-   * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
-   * useful for Docker builds.
-   */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-  /**
-   * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
-   * `SOME_VAR=''` will throw an error.
-   */
-  emptyStringAsUndefined: true,
+
+  // Configuration Options
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,  // Skip validation if SKIP_ENV_VALIDATION is set
+  emptyStringAsUndefined: true,  // Treat empty strings as undefined for stricter validation
 });
