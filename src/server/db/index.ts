@@ -1,39 +1,36 @@
 // Import necessary modules and types for database connection
-import { createClient, type Client } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
-
-import { env } from "~/env";
-import * as schema from "./schema";
-import { createPool ,type Pool} from "mysql2";
+import { drizzle } from "drizzle-orm/mysql2"; // Drizzle ORM for MySQL operations
+import { createPool, type Pool } from "mysql2"; // MySQL connection pool management
+import { env } from "~/env"; // Environment variables for database configuration
+import * as schema from "./schema"; // Database schema definitions
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
  * update.
  */
 // Define a global object to cache the database client and connection
+// This helps prevent multiple connections during development hot reloads
 const globalForDb = globalThis as unknown as {
-  client: Pool | Client | undefined; // Add Client type for compatibility
-  conn: Pool | undefined; // Add conn property to cache the connection
+  conn: Pool | undefined; // Type definition for the connection pool
 };
 
 // Initialize the client for database connection
-const client = globalForDb.client ?? createClient({ url: env.DATABASE_URL });
-if (env.NODE_ENV !== "production") globalForDb.client = client; // Cache the client in development
-
-// Export the database object using drizzle ORM
-export const db = drizzle(client as Client, { schema }); // Ensure client is of type Client
-
-// Fix the typo in the SSL configuration and initialize the connection pool
+// Creates a new connection pool if one doesn't exist, otherwise uses the cached one
 const conn = 
   globalForDb.conn ?? 
   createPool({
-    host: env.SINGLESTORE_HOST, // Database host
-    port: parseInt(env.SINGLESTORE_PORT), // Database port
-    user: env.SINGLESTORE_USER, // Database user
+    host: env.SINGLESTORE_HOST, // Database host address
+    port: parseInt(env.SINGLESTORE_PORT), // Database port number
+    user: env.SINGLESTORE_USER, // Database username
     password: env.SINGLESTORE_PASS, // Database password
     database: env.SINGLESTORE_DB_NAME, // Database name
-    ssl: {},  // Corrected from ssll to ssl, SSL configuration
-    maxIdle: 0, // Maximum idle connections
+    ssl: {},  // SSL configuration for secure connections
+    maxIdle: 0, // Maximum number of idle connections to keep (0 means no idle connections)
   });
 
-if (env.NODE_ENV !== "production") globalForDb.conn = conn; // Cache the connection in development
+// Cache the connection in development mode to improve performance
+if (env.NODE_ENV !== "production") globalForDb.conn = conn;
+
+// Export the database object using drizzle ORM
+// mode: "default" is required for MySQL connections
+export const db = drizzle(conn, { schema, mode: "default" });
