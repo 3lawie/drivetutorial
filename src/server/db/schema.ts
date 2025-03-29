@@ -1,7 +1,8 @@
 // schema.ts
-import { int, text, mysqlTable } from "drizzle-orm/mysql-core"; // Use mysqlTable
+// schema.ts
+import { int, text, singlestoreTable } from "drizzle-orm/singlestore-core"; // Change import path
 
-export const users = mysqlTable("users_table", {
+export const users = singlestoreTable("users_table", {  // Use singlestoreTable
   id: int("id").primaryKey().autoincrement(),
   name: text("name"),
   age: int("age"),
@@ -13,7 +14,7 @@ export const users = mysqlTable("users_table", {
 //import { sql } from "drizzle-orm";
 //import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
 //
-///**
+///*
 // * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
 // * database instance for multiple projects.
 // *

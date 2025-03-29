@@ -24,7 +24,7 @@ export const env = createEnv({
     // All these fields are required strings
     SINGLESTORE_USER: z.string(),     // Database username
     SINGLESTORE_PASS: z.string(),     // Database password
-    SINGLESTORE_HOST: z.string().url(), // Database host (must be valid URL)
+    SINGLESTORE_HOST: z.string(), // Database host (must be valid URL)
     SINGLESTORE_PORT: z.string(),     // Database port number
     SINGLESTORE_DB_NAME: z.string(),  // Database name
   },
