@@ -1,5 +1,5 @@
-import { type FolderType, mockFolders, type File} from "~/lib/mock-data"
-import { Folder as FolderIcon, FileIcon, Upload, ChevronRight, Link, Folder } from "lucide-react"
+import { type FolderType, type File} from "~/lib/mock-data"
+import { Folder as FolderIcon, FileIcon } from "lucide-react"
  export function FileRow(props : {file : File}) {
     const {file}= props;
 
