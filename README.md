@@ -1,3 +1,6 @@
+# to learn:
+ - Link
+ 
 #theo infos:
  - Link built in component udate using js on client side [a will re-render then refetch the json to check for re-routing[useful for reload]]
 
