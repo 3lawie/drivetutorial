@@ -1,12 +1,38 @@
 // schema.ts
 // schema.ts
 import { int, text, singlestoreTable } from "drizzle-orm/singlestore-core"; // Change import path
+import test from "node:test";
 
-export const users = singlestoreTable("users_table", {  // Use singlestoreTable
-  id: int("id").primaryKey().autoincrement(),
-  name: text("name"),
-  age: int("age"),
-});
+//export const users = singlestoreTable("users_table", {  // Use singlestoreTable
+//  id: int("id").primaryKey().autoincrement(),
+//  name: text("name"),
+//  age: int("age"),
+//});
+
+export const files= singlestoreTable(
+  "files_table",
+  {
+    id: int("id").primaryKey().autoincrement() ,
+    name: text("name").notNull() ,
+    size: int("size").notNull() ,
+    url: text("url").notNull() ,
+    parent: int("parent").notNull(),
+  },
+(t) => {
+  return [index("parent_index").on(t.parent)];
+}
+)
+export const foldres= singlestoreTable(
+  "folders_table",
+  {
+    id: int("id").primaryKey().autoincrement() ,
+    name: text("name").notNull() ,
+    parent: int("parent"),
+  },
+(t) => {
+  return [index("parent_index").on(t.parent)];
+}
+)
  //!deleted since we use singleStore
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration

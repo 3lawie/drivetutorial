@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { File, mockFiles, mockFolders } from "../lib/mock-data"
 import { Folder, FileIcon, Upload, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { Button } from "~/components/ui/button"
 import { FileRow, FolderRow } from "./file-row"
+
 
 export default function GoogleDriveClone() {
   const [currentFolder, setCurrentFolder] = useState<string>("root")
@@ -20,7 +21,7 @@ const getCurrentFolders=()=>{
     setCurrentFolder(folderId)
   }
 
-  const getBreadcrumbs = () => {
+  const getBreadcrumbs = useMemo(() => {
     const breadcrumbs = []
     let currentId = currentFolder 
 
@@ -35,7 +36,7 @@ const getCurrentFolders=()=>{
     }
 
     return breadcrumbs
-  }
+  }, [currentFolder])
 
   const handleUpload = () => {
     alert("Upload functionality would be implemented here")
@@ -49,17 +50,17 @@ const getCurrentFolders=()=>{
             <Button
               onClick={() => setCurrentFolder("root")}
               variant="ghost"
-              className="text-gray-300 hover:text-white mr-2"
+              className="text-gray-300 hover:text-white mr-2 rounded-md"
             >
               My Drive
             </Button>
-            {getBreadcrumbs().map((folder) => (
+            {getBreadcrumbs.map((folder) => (
               <div key={folder.id} className="flex items-center">
                 <ChevronRight className="mx-2 text-gray-500" size={16} />
                 <Button
                   onClick={() => handleFolderClick(folder.id)}
                   variant="ghost"
-                  className="text-gray-300 hover:text-white"
+                  className="text-gray-300 hover:text-white rounded-md"
                 >
                   {folder.name}
                 </Button>
