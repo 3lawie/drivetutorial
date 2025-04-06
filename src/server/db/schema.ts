@@ -1,6 +1,6 @@
 // schema.ts
 // schema.ts
-import { int, text, singlestoreTable, index, singlestoreTableCreator } from "drizzle-orm/singlestore-core"; // Change import path
+import { int, text, singlestoreTable, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core"; // Change import path
 import test from "node:test";
 
 //export const users = singlestoreTable("users_table", {  // Use singlestoreTable
@@ -13,11 +13,11 @@ export const createTable = singlestoreTableCreator((name) => `drivetutorial_${na
 export const files= createTable(
   "files_table",
   {
-    id: int("id").primaryKey().autoincrement() ,
+    id: bigint("id",{mode:"number",unsigned:true}).primaryKey().autoincrement() ,
     name: text("name").notNull() ,
     size: int("size").notNull() ,
     url: text("url").notNull() ,
-    parent: int("parent").notNull(),
+    parent: bigint("parent",{mode:"number",unsigned:true}).notNull(),
   },
   (t) => { // Specify the return type
     return [index("parent_index").on(t.parent)];//index the files that have 
@@ -27,9 +27,9 @@ export const files= createTable(
 export const folders= createTable(
   "folders_table",
   {
-    id: int("id").primaryKey().autoincrement() ,
+    id: bigint("id",{mode:"number",unsigned:true}).primaryKey().autoincrement() ,
     name: text("name").notNull() ,
-    parent: int("parent"),
+    parent: bigint("parent",{mode:"number",unsigned:true}),
   },
 (t) => {
   return [index("parent_index").on(t.parent)];
