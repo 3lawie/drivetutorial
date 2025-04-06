@@ -14,5 +14,5 @@ export default defineConfig({
       rejectUnauthorized: true //to activate singlestore sql editor
     }
   },
-  tablesFilter: ["drivetutorial_*"],
+  tablesFilter: ["drive-tutorial_*"],
 });
