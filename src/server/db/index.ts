@@ -1,7 +1,7 @@
 // Import necessary modules and types for database connection
 import { drizzle } from "drizzle-orm/mysql2"; // Drizzle ORM for MySQL operations
 import { createPool, type Pool } from "mysql2"; // MySQL connection pool management
-import { env } from "~/env"; // Environment variables for database configuration
+import { env } from "env"; // Environment variables for database configuration
 import * as schema from "./schema"; // Database schema definitions
 
 /**
