@@ -7,7 +7,7 @@ import { int, text, index, singlestoreTableCreator, bigint } from "drizzle-orm/s
 //  name: text("name"),
 //  age: int("age"),
 //});
-export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`) 
+export const createTable = singlestoreTableCreator((name) => `drivetutorial_${name}`) 
 
 export const files= createTable(
   "files_table",
