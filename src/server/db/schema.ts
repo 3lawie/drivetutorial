@@ -1,14 +1,13 @@
 // schema.ts
 // schema.ts
-import { int, text, singlestoreTable, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core"; // Change import path
-import test from "node:test";
+import { int, text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core"; // Change import path
 
 //export const users = singlestoreTable("users_table", {  // Use singlestoreTable
 //  id: int("id").primaryKey().autoincrement(),
 //  name: text("name"),
 //  age: int("age"),
 //});
-export const createTable = singlestoreTableCreator((name) => `drivetutorial_${name}`) 
+export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`) 
 
 export const files= createTable(
   "files_table",
@@ -24,7 +23,7 @@ export const files= createTable(
     // the same id as parent for easier providing
   }
   )
-export const folders= createTable(
+export const folders = createTable(
   "folders_table",
   {
     id: bigint("id",{mode:"number",unsigned:true}).primaryKey().autoincrement() ,
