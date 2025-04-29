@@ -1,6 +1,5 @@
 import { defineConfig } from "drizzle-kit";
 import { env } from "env";
-import path from "path";
 
 export default defineConfig({
   schema: "./src/server/db/schema.ts",
@@ -12,11 +11,8 @@ export default defineConfig({
     user: env.SINGLESTORE_USER,
     password: env.SINGLESTORE_PASS,
     database: env.SINGLESTORE_DB_NAME,
-    ssl: env.SINGLESTORE_SSL_CA
-      ? {
-          ca: path.resolve(process.cwd(), env.SINGLESTORE_SSL_CA), // Resolve CA bundle path
-          rejectUnauthorized: true, // Enforce valid certificate
-        }
-      : undefined, // SSL is optional (e.g., for local testing)
+    ssl: {
+      rejectUnauthorized: false, // Disable strict SSL validation
+    },
   },
 });
