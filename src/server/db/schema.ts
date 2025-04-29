@@ -1,40 +1,38 @@
 // schema.ts
-// schema.ts
-import { int, text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core"; // Change import path
+import { int, text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core";
 
-//export const users = singlestoreTable("users_table", {  // Use singlestoreTable
-//  id: int("id").primaryKey().autoincrement(),
-//  name: text("name"),
-//  age: int("age"),
-//});
+// `createTable` ensures all tables are prefixed with `drive-tutorial_` for organization
 export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`);
 
+// Define the 'files' table schema
+// This table stores metadata about files, including their name, size, URL, and parent folder.
 export const files = createTable(
   "files_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
-    name: text("name").notNull(),
-    size: int("size").notNull(),
-    url: text("url").notNull(),
-    parent: bigint("parent", { mode: "number", unsigned: true }).notNull(),
+    name: text("name").notNull(), // File name (required)
+    size: int("size").notNull(), // File size in bytes (required)
+    url: text("url").notNull(), // File URL (required)
+    parent: bigint("parent", { mode: "number", unsigned: true }).notNull(), // Parent folder ID (required)
   },
   (t) => {
-    return [index("parent_index").on(t.parent)]; // Index for easier querying by parent
+    return [index("parent_index").on(t.parent)]; // Index for faster lookups by parent
   }
 );
 
+// Define the 'folders' table schema
+// This table stores metadata about folders, including their name and optional parent folder.
 export const folders = createTable(
   "folders_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
-    name: text("name").notNull(),
-    parent: bigint("parent", { mode: "number", unsigned: true }), // Optional parent reference
+    name: text("name").notNull(), // Folder name (required)
+    parent: bigint("parent", { mode: "number", unsigned: true }), // Optional parent folder ID
   },
   (t) => {
-    return [index("parent_index").on(t.parent)]; // Index for easier querying by parent
+    return [index("parent_index").on(t.parent)]; // Index for faster lookups by parent
   }
 );
-
 //!deleted since we use singleStore
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
