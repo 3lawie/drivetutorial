@@ -8,12 +8,12 @@ export default function sandboxPage() {
         Seed Function
         <form  action={async ()=>{
             "use server"
-           const folderInsert= await db.insert(folders as any).values(mockFolders.map((folder,index) => ({
+           const folderInsert= await db.insert(folders).values(mockFolders.map((folder,index) => ({
             id: index + 1,
             name:folder.name,
             parent: index !==0 ? 1 : null
            }))); 
-           const fileInsert=await db.insert(files as any).values(mockFiles.map((file,index) => ({
+           const fileInsert=await db.insert(files).values(mockFiles.map((file,index) => ({
            id: index + 1 ,
            name: file.name,
            size: 5000,
