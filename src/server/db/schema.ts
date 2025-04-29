@@ -7,34 +7,35 @@ import { int, text, index, singlestoreTableCreator, bigint } from "drizzle-orm/s
 //  name: text("name"),
 //  age: int("age"),
 //});
-export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`) 
+export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`);
 
-export const files= createTable(
+export const files = createTable(
   "files_table",
   {
-    id: bigint("id",{mode:"number",unsigned:true}).primaryKey().autoincrement() ,
-    name: text("name").notNull() ,
-    size: int("size").notNull() ,
-    url: text("url").notNull() ,
-    parent: bigint("parent",{mode:"number",unsigned:true}).notNull(),
+    id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
+    name: text("name").notNull(),
+    size: int("size").notNull(),
+    url: text("url").notNull(),
+    parent: bigint("parent", { mode: "number", unsigned: true }).notNull(),
   },
-  (t) => { // Specify the return type
-    return [index("parent_index").on(t.parent)];//index the files that have 
-    // the same id as parent for easier providing
+  (t) => {
+    return [index("parent_index").on(t.parent)]; // Index for easier querying by parent
   }
-  )
+);
+
 export const folders = createTable(
   "folders_table",
   {
-    id: bigint("id",{mode:"number",unsigned:true}).primaryKey().autoincrement() ,
-    name: text("name").notNull() ,
-    parent: bigint("parent",{mode:"number",unsigned:true}),
+    id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
+    name: text("name").notNull(),
+    parent: bigint("parent", { mode: "number", unsigned: true }), // Optional parent reference
   },
-(t) => {
-  return [index("parent_index").on(t.parent)];
-}
-)
- //!deleted since we use singleStore
+  (t) => {
+    return [index("parent_index").on(t.parent)]; // Index for easier querying by parent
+  }
+);
+
+//!deleted since we use singleStore
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 //

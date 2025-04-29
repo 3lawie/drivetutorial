@@ -1,32 +1,26 @@
-// Import required dependencies
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
-
-/*
- * createEnv: A utility function from the T3 stack that creates a type-safe environment configuration
- * z: Zod library for schema validation with TypeScript integration
- */
 
 export const env = createEnv({
   // Server-side Environment Configuration
   server: {
     // Database connection URL - Must be a valid URL format
     DATABASE_URL: z.string().url(),
-    
+
     // Application environment setting
-    // Restricts values to only: "development", "test", or "production"
-    // Defaults to "development" if not specified
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    
+
     // SingleStore Database Credentials
-    // All these fields are required strings
     SINGLESTORE_USER: z.string(),     // Database username
     SINGLESTORE_PASS: z.string(),     // Database password
-    SINGLESTORE_HOST: z.string(), // Database host (must be valid URL)
-    SINGLESTORE_PORT: z.string(),     // Database port number
+    SINGLESTORE_HOST: z.string(),     // Database host (must be valid URL)
+    SINGLESTORE_PORT: z.string(),     // Database port number (as string)
     SINGLESTORE_DB_NAME: z.string(),  // Database name
+
+    // Add SSL CA bundle path (optional if SSL is not enforced)
+    SINGLESTORE_SSL_CA: z.string().optional(), // Path to CA bundle (optional)
   },
 
   // Client-side Environment Configuration
@@ -37,7 +31,6 @@ export const env = createEnv({
   },
 
   // Runtime Environment Mapping
-  // Maps schema definitions to actual process.env values
   runtimeEnv: {
     // Maps each environment variable to its process.env equivalent
     DATABASE_URL: process.env.DATABASE_URL,
@@ -47,9 +40,7 @@ export const env = createEnv({
     SINGLESTORE_HOST: process.env.SINGLESTORE_HOST,
     SINGLESTORE_PORT: process.env.SINGLESTORE_PORT,
     SINGLESTORE_DB_NAME: process.env.SINGLESTORE_DB_NAME,
-    
-    // Example of client-side variable mapping (commented out)
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    SINGLESTORE_SSL_CA: process.env.SINGLESTORE_SSL_CA, // Map SSL CA bundle
   },
 
   // Configuration Options
