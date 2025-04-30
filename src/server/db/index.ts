@@ -28,4 +28,6 @@ if(env.NODE_ENV !=="production") globalFordb.conn = conn;
 
 conn.addListener("error", (err)=>{
   console.error("Database connection error:", err);
-})
+});
+// Export the database object using Drizzle ORM
+export const db = drizzle(conn, { schema });
