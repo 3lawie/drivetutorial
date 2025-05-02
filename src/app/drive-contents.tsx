@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button"
 import { FileRow, FolderRow } from "./file-row"
 
 
-export default function GoogleDriveClone(
+export default function DriveContents(
   props :
    {
     files: File[],//$inferSelects[]
@@ -86,10 +86,10 @@ const getCurrentFolders=()=>{
             </div>
           </div>
           <ul>
-          { props.folders.map((folder) => (
+          { getCurrentFiles().map((folder) => (
         <FolderRow key={folder.id} folder={folder} handleFolderClick={()=> handleFolderClick(folder.id)} />  
         ) )}
-            {props.files.map((file) => (
+            {getCurrentFolders().map((file) => (
              <FileRow key={file.id} file={file} />
             ))}
 

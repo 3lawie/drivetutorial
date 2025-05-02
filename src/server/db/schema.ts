@@ -1,6 +1,6 @@
 import "server-only"//security but can import in the dev mode
 // schema.ts
-import { int, text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core";
+import {text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core";
 
 // `createTable` ensures all tables are prefixed with `drive-tutorial_` for organization
 export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`);
