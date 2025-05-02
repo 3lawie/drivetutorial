@@ -86,10 +86,10 @@ const getCurrentFolders=()=>{
             </div>
           </div>
           <ul>
-          { getCurrentFiles().map((folder) => (
+          { getCurrentFolders().map((folder) => (
         <FolderRow key={folder.id} folder={folder} handleFolderClick={()=> handleFolderClick(folder.id)} />  
         ) )}
-            {getCurrentFolders().map((file) => (
+            {getCurrentFiles().map((file) => (
              <FileRow key={file.id} file={file} />
             ))}
 
