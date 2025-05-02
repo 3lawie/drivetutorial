@@ -1,4 +1,5 @@
-import "server-only"//security but can import in the dev mode
+/*
+!import "server-only"*/ //security but can import in the dev mode
 // schema.ts
 import {text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core";
 
