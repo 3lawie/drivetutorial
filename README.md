@@ -10,7 +10,7 @@
 
 ##TODO
 
-- [] set up database and dta model
+- [x] set up database and data model
 - [] Move folder open state to URL
 - [] Add auth
 - [] Add file uploading 
@@ -19,7 +19,7 @@
 ## Note from 1-4-2025 [34:00]
 just finished connection database, next steps: 
 
-- [ ] update Schema to show files and folders
-- [ ] MAnually insert examples
-- [ ] Render them in the UI
-- [ ] Push and make sure it all works
+- [x] update Schema to show files and folders
+- [x] MAnually insert examples
+- [x] Render them in the UI
+- [ ] Push and make sure it all works[netlify]
