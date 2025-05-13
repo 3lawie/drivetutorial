@@ -15,12 +15,6 @@ export default function DriveContents(
     folders: FolderType[],
   }) {
  
-  const getCurrentFiles = () => {
-    return props.files.filter((file) => file.parent === currentFolder)
-  }
-const getCurrentFolders=()=>{
-  return props.folders.filter((folder)=> folder.parent == currentFolder)
-}
   
   const Breadcrumbs : FolderType[] =[];
 
