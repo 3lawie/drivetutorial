@@ -1,11 +1,11 @@
 import { type FolderType, type File} from "~/lib/mock-data"
 import { Folder as FolderIcon, FileIcon } from "lucide-react"
 import Link from "next/link";
- export function FileRow(props : {file : File}) {
+ export function FileRow(props : {file : File , lastFile: boolean}) {
     const {file}= props;
 
     return (
-        <li key={file.id} className="px-6 py-4 border-b border-gray-700 hover:bg-gray-750 transition duration-200">
+        <li key={file.id} className={`px-6 py-4 border-gray-700 hover:bg-gray-750 transition duration-200 ${props.lastFile ? '' : 'border-b'}`} >
             <div className="grid grid-cols-12 gap-4 items-center">
                 <div className="col-span-6 flex items-center">
                     <a 

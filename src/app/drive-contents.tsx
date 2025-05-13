@@ -15,8 +15,8 @@ export default function DriveContents(
     folders: FolderType[],
     parents: FolderType[],
   }) {
- 
-  
+  const emptyFolder = [...props.files, ...props.folders].length === 0;
+
   const handleUpload = () => {
     alert("Upload functionality would be implemented here")
   }
@@ -24,7 +24,7 @@ export default function DriveContents(
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 rounded-[20px]">
           <div className="flex items-center">
             <Link
               href={`/f/1`}
@@ -50,24 +50,28 @@ export default function DriveContents(
             Upload
           </Button>
         </div>
-        <div className="bg-gray-800 rounded-lg shadow-xl">
-          <div className="px-6 py-4 border-b border-gray-700">
-            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-400">
-              <div className="col-span-6">Name</div>
-              <div className="col-span-3">Type</div>
-              <div className="col-span-3">Size</div>
+        {emptyFolder ? (
+          <div className="h-full flex justify-center items-center text-5xl relative top-32 font-mono tracking-tight">empty folder</div>
+        ) : (
+          <div className="bg-gray-800 rounded-[8px] shadow-xl">
+            <div className="px-6 py-4 border-b border-gray-700">
+              <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-400">
+                <div className="col-span-6">Name</div>
+                <div className="col-span-3">Type</div>
+                <div className="col-span-3">Size</div>
+              </div>
             </div>
+            <ul>
+              {props.folders.map((folder) => (
+                <FolderRow key={folder.id} folder={folder} />
+              ))}
+              {props.files.map((file, index) => {
+                const lastFile = props.files.length - 1 === index;
+                return <FileRow key={file.id} file={file} lastFile={lastFile} />;
+              })}
+            </ul>
           </div>
-          <ul>
-          { props.folders.map((folder) => (
-        <FolderRow key={folder.id} folder={folder}  />  
-        ) )}
-            {props.files.map((file) => (
-             <FileRow key={file.id} file={file} />
-            ))}
-
-          </ul>
-        </div>
+        )}
       </div>
     </div>
   )
