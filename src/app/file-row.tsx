@@ -1,5 +1,6 @@
 import { type FolderType, type File} from "~/lib/mock-data"
 import { Folder as FolderIcon, FileIcon } from "lucide-react"
+import Link from "next/link";
  export function FileRow(props : {file : File}) {
     const {file}= props;
 
@@ -22,18 +23,18 @@ import { Folder as FolderIcon, FileIcon } from "lucide-react"
         </li>
     )
 }
-export function FolderRow({ folder, handleFolderClick }: { folder: FolderType /*FolderType*/; handleFolderClick: () => void }) {
+export function FolderRow({ folder/*, handleFolderClick*/ }: { folder: FolderType /*FolderType*/,/* handleFolderClick: () => void*/ }) {
     return (
         <li key={folder.id} className="px-6 py-4 border-b border-gray-700 hover:bg-gray-750">
         <div className="grid grid-cols-12 gap-4 items-center">
           <div className="col-span-6 flex items-center">
-              <button
-                onClick={() => handleFolderClick() }
-                className="flex items-center text-gray-100 hover:text-blue-400"
+              <Link
+             href={`/f/${folder.id}`}
+             className="flex items-center text-gray-100 hover:text-blue-400"
               >
                 <FolderIcon className="mr-3" size={20} />
                 {folder.name}
-              </button>
+              </Link>
             </div>
           <div className="col-span-3 text-gray-400">Folder</div>
         </div>
