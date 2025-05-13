@@ -60,10 +60,10 @@ export default function DriveContents(
             </div>
           </div>
           <ul>
-          { getCurrentFolders().map((folder) => (
+          { props.folders.map((folder) => (
         <FolderRow key={folder.id} folder={folder}  />  
         ) )}
-            {getCurrentFiles().map((file) => (
+            {props.files.map((file) => (
              <FileRow key={file.id} file={file} />
             ))}
 
