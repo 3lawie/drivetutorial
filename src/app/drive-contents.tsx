@@ -22,7 +22,7 @@ const getCurrentFolders=()=>{
   return props.folders.filter((folder)=> folder.parent == currentFolder)
 }
   
-  const Breadcrumbs =[];
+  const Breadcrumbs : FolderType[] =[];
 
   const handleUpload = () => {
     alert("Upload functionality would be implemented here")
@@ -40,7 +40,7 @@ const getCurrentFolders=()=>{
             >
               My Drive
             </Link>
-            {Breadcrumbs.map((folder) => (
+            { Breadcrumbs.map((folder) => (
               <div key={folder.id} className="flex items-center">
                 <ChevronRight className="mx-2 text-gray-500" size={16} />
                 <Link
