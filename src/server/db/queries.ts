@@ -4,7 +4,7 @@ import DriveContents from "src/app/drive-contents";
 import { eq } from "drizzle-orm";
 import { type File, type FolderType } from "~/lib/mock-data";
 
-export async function getAllParents(folderId: number){
+export async function getAllParentsFolders(folderId: number){
     const parents = [];
     let currentId : number | null = folderId;
     while (currentId !== null) {

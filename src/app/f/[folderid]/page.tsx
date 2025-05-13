@@ -2,7 +2,7 @@ import { db } from "~/server/db";
 import { files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import DriveContents from "../../drive-contents";
 import { eq } from "drizzle-orm";
-import { getAllParents, getFiles, getFolders } from "~/server/db/queries";
+import { getAllParentsFolders, getFiles, getFolders } from "~/server/db/queries";
 
 
 
@@ -19,7 +19,12 @@ export default async function GoogleDriveClone(
                 return <div>{"Invalid Id Input"}</div>
             } 
 
-    const [ files,folders, parents] = await Promise.all([getFiles(parsedFolderId), getFolders(parsedFolderId), getAllParents(parsedFolderId)])
+    const [ files,folders, parents] = await Promise.all
+        ([getFiles(parsedFolderId),
+        getFolders(parsedFolderId),
+        getAllParentsFolders(parsedFolderId)
+        ]);
+   
     return <DriveContents files={files} folders={folders}  parents={parents}></DriveContents>
 }
 
