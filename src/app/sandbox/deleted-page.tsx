@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 import { mockFolders, mockFiles } from "~/lib/mock-data";
-import { folders, files } from "~/server/db/schema";
+import { folders_table, files_table } from "~/server/db/schema";
 
 
 export default function sandboxPage() {
@@ -8,12 +8,12 @@ export default function sandboxPage() {
         Seed Function
         <form  action={async ()=>{
             "use server"
-        const folderInsert = await db.insert(folders).values(mockFolders.map((folder,index)=>({
+        const folderInsert = await db.insert(folders_table).values(mockFolders.map((folder,index)=>({
         name:folder.name,
         parent: index !== 0 ? 1 : null,
         id: index + 1,    
         })));
-        const fileInsert = await db.insert(files).values(mockFiles.map((file,index)=>({
+        const fileInsert = await db.insert(files_table).values(mockFiles.map((file,index)=>({
         id: index + 1,
         name:file.name,
         size:5000,

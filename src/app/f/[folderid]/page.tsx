@@ -1,5 +1,5 @@
 import { db } from "~/server/db";
-import { files as filesSchema, folders, folders as foldersSchema } from "~/server/db/schema";
+import { files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import DriveContents from "../../drive-contents";
 import { eq } from "drizzle-orm";
 import { type FolderType } from "~/lib/mock-data";

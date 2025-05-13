@@ -8,7 +8,7 @@ export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${n
 
 // Define the 'files' table schema
 // This table stores metadata about files, including their name, size, URL, and parent folder.
-export const files = createTable(
+export const files_table = createTable(
   "files_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
@@ -24,7 +24,7 @@ export const files = createTable(
 
 // Define the 'folders' table schema
 // This table stores metadata about folders, including their name and optional parent folder.
-export const folders = createTable(
+export const folders_table = createTable(
   "folders_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
