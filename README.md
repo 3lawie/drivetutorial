@@ -11,10 +11,10 @@
 ##TODO
 
 - [x] set up database and data model
-- [] Move folder open state to URL
-- [] Add auth
-- [] Add file uploading 
-
+- [ ] Move folder open state to URL
+- [ ] Add auth
+- [ ] Add file uploading 
+- [ ] Add analytics
 
 ## Note from 1-4-2025 [34:00]
 just finished connection database, next steps: 
@@ -23,3 +23,9 @@ just finished connection database, next steps:
 - [x] MAnually insert examples
 - [x] Render them in the UI
 - [ ] Push and make sure it all works[netlify]
+
+## Note from 13-5-2025
+
+- [ ] change folders to links components, remove all client states
+- [ ] Clean up database and data fetching patterns
+- [ ] real homepage

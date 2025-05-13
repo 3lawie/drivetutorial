@@ -8,5 +8,5 @@ export default async function App(){
     const files = await db.select().from(filesSchema)
     const folders = await db.select().from(foldersSchema)
 
-    return <DriveContents files={files} folders={folders} ></DriveContents>
+    return <div>hello</div>
 }
