@@ -13,3 +13,6 @@ declare module "drizzle-kit" {
   }
 }
 -------
+
+client side action: update page after rendering,
+ effect a thing, function the user clicks,function more than show UI

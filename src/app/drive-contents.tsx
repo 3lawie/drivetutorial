@@ -13,11 +13,10 @@ export default function DriveContents(
    {
     files: File[],//$inferSelects[]
     folders: FolderType[],
+    parents: FolderType[],
   }) {
  
   
-  const Breadcrumbs : FolderType[] =[];
-
   const handleUpload = () => {
     alert("Upload functionality would be implemented here")
   }
@@ -29,12 +28,12 @@ export default function DriveContents(
           <div className="flex items-center">
             <Link
               href={`/f/1`}
-              className="text-gray-300 hover:text-white mr-2 rounded-md left-1.5 bg-slate-500 p-2.5 rounded-[7px] relative "
+              className="text-gray-300 hover:text-white mr-2 rounded-[7px] left-1.5 bg-slate-500 p-2.5 rounded-[7px] relative "
 
             >
               My Drive
             </Link>
-            { Breadcrumbs.map((folder) => (
+            { props.parents.map((folder) => (
               <div key={folder.id} className="flex items-center">
                 <ChevronRight className="mx-2 text-gray-500" size={16} />
                 <Link
