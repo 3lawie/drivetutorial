@@ -6,6 +6,7 @@ import { Upload, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { Button } from "~/components/ui/button"
 import { FileRow, FolderRow } from "./file-row"
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 
 
 export default function DriveContents(
@@ -45,10 +46,15 @@ export default function DriveContents(
               </div>
             ))}
           </div>
-          <Button onClick={handleUpload} className="bg-blue-600 text-white hover:bg-blue-700">
-            <Upload className="mr-2" size={20} />
-            Upload
-          </Button>
+          <div>
+          <SignedOut>
+              <SignInButton />
+              <SignUpButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
         </div>
         {emptyFolder ? (
           <div className="h-full flex justify-center items-center text-5xl relative top-32 font-mono tracking-tight">empty folder</div>
