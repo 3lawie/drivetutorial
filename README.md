@@ -11,8 +11,8 @@
 ##TODO
 
 - [x] set up database and data model
-- [ ] Move folder open state to URL
-- [ ] Add auth
+- [x] Move folder open state to URL
+- [x] Add auth
 - [ ] Add file uploading 
 - [ ] Add analytics
 
@@ -29,3 +29,4 @@ just finished connection database, next steps:
 - [x] change folders to links components, remove all client states
 - [ ] Clean up database and data fetching patterns
 - [ ] real homepage
+- {" 2:3:29 check netlify error in chat also"}
