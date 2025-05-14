@@ -1,10 +1,8 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { type File, type FolderType, mockFiles, mockFolders } from "../lib/mock-data"
-import { Upload, ChevronRight } from "lucide-react"
+import { type File, type FolderType } from "../lib/mock-data"
+import { ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { Button } from "~/components/ui/button"
 import { FileRow, FolderRow } from "./file-row"
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 
@@ -49,7 +47,6 @@ export default function DriveContents(
           <div>
           <SignedOut>
               <SignInButton />
-              <SignUpButton />
             </SignedOut>
             <SignedIn>
               <UserButton />
