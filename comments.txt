@@ -17,3 +17,8 @@ declare module "drizzle-kit" {
 -client side action: update page after rendering,
  effect a thing, function the user clicks,function more than show UI
 -export object pattern for QUERIES
+- {Partial,Omit} types merging
+
+- {tailwind config}
+
+- {next route and navigate[navigate to refresh or update page] }

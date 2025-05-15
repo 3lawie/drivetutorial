@@ -22,6 +22,8 @@ export const files_table = createTable(
   }
 );
 
+export type DB_FileType = typeof files_table.$inferSelect;
+
 // Define the 'folders' table schema
 // This table stores metadata about folders, including their name and optional parent folder.
 export const folders_table = createTable(
@@ -35,6 +37,9 @@ export const folders_table = createTable(
     return [index("parent_index").on(t.parent)]; // Index for faster lookups by parent
   }
 );
+
+export type DB_FolderType= typeof folders_table.$inferSelect;
+
 //!deleted since we use singleStore
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration

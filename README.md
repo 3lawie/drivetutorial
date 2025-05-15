@@ -30,3 +30,9 @@ just finished connection database, next steps:
 - [ ] Clean up database and data fetching patterns
 - [ ] real homepage
 - {" 2:3:29 check netlify error in chat also"}
+
+## 15-5-2025
+- [ ] Real homepage
+- [ ] Upload files to the right folder
+- [ ] Delete files button
+- [ ] Allow files that aren't images to be uploaded

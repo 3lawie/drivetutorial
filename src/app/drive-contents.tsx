@@ -5,6 +5,8 @@ import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { FileRow, FolderRow } from "./file-row"
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { UploadButton } from "~/components/uploadthing"
+import { useRouter } from "next/navigation"
 
 
 export default function DriveContents(
@@ -16,10 +18,8 @@ export default function DriveContents(
   }) {
   const emptyFolder = [...props.files, ...props.folders].length === 0;
 
-  const handleUpload = () => {
-    alert("Upload functionality would be implemented here")
-  }
-
+  const navigate = useRouter()
+  
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
@@ -73,8 +73,12 @@ export default function DriveContents(
                 return <FileRow key={file.id} file={file} lastFile={lastFile} />;
               })}
             </ul>
+            
           </div>
         )}
+        <UploadButton endpoint="imageUploader" className="p-4" 
+        onClientUploadComplete={ ()=>navigate.refresh() }
+        />
       </div>
     </div>
   )
