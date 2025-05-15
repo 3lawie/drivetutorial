@@ -1,5 +1,7 @@
+import { FileType } from "lucide-react";
 import DriveContents from "../../drive-contents";
 import { QUERIES } from "~/server/db/queries";
+import { DB_FileType } from "~/server/db/schema";
 
 
 
@@ -22,7 +24,10 @@ export default async function GoogleDriveClone(
         QUERIES.getFolders(parsedFolderId),
         QUERIES.getAllParentsForFolders(parsedFolderId)
         ]);
+        let isFile=false;
+   if (parents.length > 0 && 'url' in parents[parents.length - 1]!) isFile=true;
    
-    return <DriveContents files={files} folders={folders}  parents={parents}></DriveContents>
+
+    return <DriveContents files={files} folders={folders}  parents={parents} isFile={isFile}></DriveContents>
 }
 

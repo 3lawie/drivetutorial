@@ -4,7 +4,7 @@ import { type File, type FolderType } from "../lib/mock-data"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { FileRow, FolderRow } from "./file-row"
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
 import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
 
@@ -15,7 +15,10 @@ export default function DriveContents(
     files: File[],//$inferSelects[]
     folders: FolderType[],
     parents: FolderType[],
+    isFile: boolean,
   }) {
+
+    
   const emptyFolder = [...props.files, ...props.folders].length === 0;
 
   const navigate = useRouter()
@@ -27,7 +30,7 @@ export default function DriveContents(
           <div className="flex items-center">
             <Link
               href={`/f/2251799813685249`}
-              className="text-gray-300 hover:text-white mr-2 rounded-[7px] left-1.5 bg-slate-500 p-2.5 rounded-[7px] relative "
+              className="text-gray-300 hover:text-white mr-2 rounded-[7px] left-1.5 bg-slate-500 p-2.5 relative "
 
             >
               My Drive
@@ -53,7 +56,7 @@ export default function DriveContents(
             </SignedIn>
           </div>
         </div>
-        {emptyFolder ? (
+        {( props.isFile )  ? (
           <div className="h-full flex justify-center items-center text-5xl relative top-32 font-mono tracking-tight">empty folder</div>
         ) : (
           <div className="bg-gray-800 rounded-[8px] shadow-xl">
@@ -83,4 +86,3 @@ export default function DriveContents(
     </div>
   )
 }
-
