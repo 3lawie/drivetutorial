@@ -1,10 +1,10 @@
 /*
 !import "server-only"*/ //security but can import in the dev mode
 // schema.ts
-import {text, index, singlestoreTableCreator, bigint } from "drizzle-orm/singlestore-core";
+import {text, index, singlestoreTableCreator, bigint, timestamp } from "drizzle-orm/singlestore-core";
 
 // `createTable` ensures all tables are prefixed with `drive-tutorial_` for organization
-export const createTable = singlestoreTableCreator((name) => `drive-tutorial_${name}`);
+export const createTable = singlestoreTableCreator((name) => `drive_tutorial_${name}`);
 
 // Define the 'files' table schema
 // This table stores metadata about files, including their name, size, URL, and parent folder.
@@ -12,13 +12,17 @@ export const files_table = createTable(
   "files_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
+    ownerId:text("owner_id").notNull() ,
     name: text("name").notNull(), // File name (required)
     size: bigint("size",{mode:"number", unsigned: true}).notNull(), // File size in bytes (required)
     url: text("url").notNull(), // File URL (required)
     parent: bigint("parent", { mode: "number", unsigned: true }).notNull(), // Parent folder ID (required)
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (t) => {
-    return [index("parent_index").on(t.parent)]; // Index for faster lookups by parent
+    return [index("parent_index").on(t.parent),
+      index("owner_id_index").on(t.ownerId),
+    ]; // Index for faster lookups by parent
   }
 );
 
@@ -30,11 +34,15 @@ export const folders_table = createTable(
   "folders_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
+    ownerId:text("owner_id").notNull() ,
     name: text("name").notNull(), // Folder name (required)
     parent: bigint("parent", { mode: "number", unsigned: true }), // Optional parent folder ID
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (t) => {
-    return [index("parent_index").on(t.parent)]; // Index for faster lookups by parent
+    return [index("parent_index").on(t.parent),
+      index("owner_id_index").on(t.ownerId)
+    ]; // Index for faster lookups by parent
   }
 );
 

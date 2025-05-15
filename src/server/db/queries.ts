@@ -35,11 +35,11 @@ export const QUERIES ={
 
 export const MUTATIONS ={
     createFile: async function (input:{
-        file: Omit<DB_FileType, "id" | "parent">,
+        file: Omit<DB_FileType, "id" >,
         userId: string;
         }){
         return db.insert(filesSchema).values({
             ...input.file,
-        parent:1,});
+        parent:input.file.parent,});
         }
 }
