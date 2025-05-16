@@ -32,9 +32,9 @@ just finished connection database, next steps:
 - {" 2:3:29 check netlify error in chat also"}
 
 ## 15-5-2025
-- [ ] Add ownership to files and folders
-- [ ] Upload files to the right folder
+- [x] Add ownership to files and folders
+- [x] Upload files to the right folder
 - [ ] Delete files button
-- [ ] Allow files that aren't images to be uploaded
+- [x] Allow files that aren't images to be uploaded
 - [ ] Real homepage
 - {2:31:11 complete seed function}

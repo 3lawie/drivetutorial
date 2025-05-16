@@ -45,7 +45,7 @@ export const MUTATIONS ={
         userId: string;
         }){
         return db.insert(filesSchema).values({
-            ...input.file,
-        parent:input.file.parent,});
+            ...input.file
+        });
         }
 }
