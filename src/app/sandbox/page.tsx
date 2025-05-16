@@ -2,9 +2,10 @@ import { db } from "~/server/db";
 import { mockFolders, mockFiles } from "~/lib/mock-data";
 import { folders_table, files_table } from "~/server/db/schema";
 import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 
 
-export default function sandboxPage() {
+export default async function sandboxPage() {
     return <div className="flex flex-col gap-4">
         Seed Function
         <form  action={async ()=>{
@@ -12,7 +13,13 @@ export default function sandboxPage() {
             const user = await auth();
 
             if (!user.userId) throw new Error("Unauthorized");
-                
+               
+            const folders = await db
+            .select()
+            .from(folders_table)
+            .where(eq(folders_table.ownerId,user.userId));
+            console.log(folders);
+            
                 const rootFolders = await db.insert(folders_table).values({
                     name:"root",
                     ownerId: user.userId,

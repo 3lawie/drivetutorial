@@ -24,10 +24,16 @@ export default async function GoogleDriveClone(
         QUERIES.getFolders(parsedFolderId),
         QUERIES.getAllParentsForFolders(parsedFolderId)
         ]);
-        let isFile=false;
-   if (parents.length > 0 && 'url' in parents[parents.length - 1]!) isFile=true;
+        const isFile= "url" in parents[parents.length -1 ]! && "size" in  parents[parents.length -1 ]!;
+        
    
 
-    return <DriveContents files={files} folders={folders}  parents={parents} isFile={isFile}></DriveContents>
+    return <DriveContents 
+        files={files} 
+        folders={folders}  
+        parents={parents} 
+        isFile={isFile}
+        currentFolderId={parsedFolderId}
+        ></DriveContents>
 }
 

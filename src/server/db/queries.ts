@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "~/server/db";
-import { type DB_FileType, files_table as filesSchema, folders_table as foldersSchema } from "~/server/db/schema";
+import { type DB_FileType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { type File, type FolderType } from "~/lib/mock-data";
 
@@ -29,6 +29,13 @@ export const QUERIES ={
         select().
         from(filesSchema).
         where(eq(filesSchema.parent, folderId))
+    },
+    getFolderById: async function (folderId: number ) {
+      const folder = await db
+      .select()
+      .from(folders_table)
+      .where(eq(folders_table.id, folderId))
+      return folder[0];  
     }
 }
 
