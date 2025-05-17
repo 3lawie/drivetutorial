@@ -50,3 +50,5 @@ just finished connection database, next steps:
     post hog with netlify because of netlify wrapper, a netlify.toml can help 
      solve the problem he found in the posthog docs to solve it instead of 
       original rewrites
+- [x] Make sure events are persisting as expected
+- [x] Make sure sort order is consistent 
