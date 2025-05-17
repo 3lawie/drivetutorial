@@ -1,6 +1,6 @@
 "use client"
 
-import { type File, type FolderType } from "../lib/mock-data"
+import { type File, type FolderType } from "../../../lib/mock-data"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { FileRow, FolderRow } from "./file-row"
@@ -86,12 +86,13 @@ export default function DriveContents(
           </>
         )}
       </div>
-      <UploadButton endpoint="driveUploader" className="p-4" 
-        onClientUploadComplete={ ()=>navigate.refresh() }
+      <UploadButton 
+        endpoint="driveUploader" 
+        onClientUploadComplete={() => navigate.refresh()}
         input={{
-          folderId:props.currentFolderId,
+          folderId: props.currentFolderId,
         }}
-        />
+      />
       
     </div>
   )

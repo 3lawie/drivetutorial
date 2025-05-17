@@ -1,6 +1,6 @@
 import {drizzle } from "drizzle-orm/singlestore";
 import { createPool, type Pool } from "mysql2";
-import { env } from "env";
+import { env } from "~/env";
 import * as schema from "./schema";
 import { console } from "inspector";
 

@@ -38,3 +38,8 @@ just finished connection database, next steps:
 - [x] Allow files that aren't images to be uploaded
 - [ ] Real homepage
 - {2:31:11 complete seed function}
+
+## 16-5-2025
+- [ ] Add analytics
+- [ ] Add delete file
+- [ ] Real HomePage + onBoarding

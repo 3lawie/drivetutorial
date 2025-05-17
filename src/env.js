@@ -12,7 +12,11 @@ export const env = createEnv({
     SINGLESTORE_DB_NAME: z.string(),
     SINGLESTORE_SSL_CA: z.string().optional(), // SSL CA bundle path is optional
   },
-  client: {},
+  client: {
+
+    NEXT_PUBLIC_POSTHOG_KEY : z.string(),
+    NEXT_PUBLIC_POSTHOG_HOST : z.string(),
+  },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
@@ -22,6 +26,8 @@ export const env = createEnv({
     SINGLESTORE_PORT: process.env.SINGLESTORE_PORT,
     SINGLESTORE_DB_NAME: process.env.SINGLESTORE_DB_NAME,
     SINGLESTORE_SSL_CA: process.env.SINGLESTORE_SSL_CA,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

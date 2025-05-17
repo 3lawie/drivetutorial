@@ -1,5 +1,5 @@
 import { FileType } from "lucide-react";
-import DriveContents from "../../drive-contents";
+import DriveContents from "./drive-contents";
 import { QUERIES } from "~/server/db/queries";
 import { DB_FileType } from "~/server/db/schema";
 
