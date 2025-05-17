@@ -43,3 +43,10 @@ just finished connection database, next steps:
 - [ ] Add analytics
 - [ ] Add delete file
 - [ ] Real HomePage + onBoarding
+
+## 17-52025
+- rewrite the proxy reverse methods and differences between dev and prod 
+   theo search for deploying posthog with netlify which found a common with deploying
+    post hog with netlify because of netlify wrapper, a netlify.toml can help 
+     solve the problem he found in the posthog docs to solve it instead of 
+      original rewrites
