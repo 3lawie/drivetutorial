@@ -52,3 +52,10 @@ just finished connection database, next steps:
       original rewrites
 - [x] Make sure events are persisting as expected
 - [x] Make sure sort order is consistent 
+
+## 18-5-2025
+- [x] Update database for UploadThing file Key
+- [x] update deletion for files and refresh by custom cookie
+
+-- HomeWorks:
+- Folder deletion 

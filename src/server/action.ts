@@ -5,6 +5,7 @@ import { db } from "./db";
 import { files_table } from "./db/schema";
 import { and, eq } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
+import { cookies } from "next/headers";
 
 
 // use server have endpoint which is the exported variables 
@@ -43,7 +44,9 @@ export async function deleteFile(fileId: number){
 
             console.log(dbDeleteResult);
 
-
+            const c = await cookies();
+            
+            c.set("force-refresh", JSON.stringify(Math.random))
          
             return {success: true, error: "Null",message:"Deleted from DB only"}
         }
@@ -57,5 +60,17 @@ export async function deleteFile(fileId: number){
 
    console.log(dbDeleteResult);
 
+   
+   const c = await cookies();
+            
+   c.set("force-refresh", JSON.stringify(Math.random))
+
    return {success: true, error: "Null",message:"Deleted from DB and UploadThing"}
 }
+
+/*
+!revalidate the page by creating new cookie which send updated content
+! cookie time is same as deletion request
+?const c = await cookies();
+?c.set("force-refresh", JSON.stringify(Math.random))
+*/
