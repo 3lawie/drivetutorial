@@ -3,6 +3,7 @@ import { mockFolders, mockFiles } from "~/lib/mock-data";
 import { folders_table, files_table } from "~/server/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
+import { FileKey } from "lucide-react";
 
 
 export default async function sandboxPage() {
@@ -13,40 +14,40 @@ export default async function sandboxPage() {
             const user = await auth();
 
             if (!user.userId) throw new Error("Unauthorized");
-               
-            const folders = await db
-            .select()
-            .from(folders_table)
-            .where(eq(folders_table.ownerId,user.userId));
-            console.log(folders);
             
-                const rootFolders = await db.insert(folders_table).values({
-                    name:"root",
-                    ownerId: user.userId,
-                    parent:null,
-                })
-                .$returningId();
+            const folders = await db.select().from(folders_table);
 
-            const insertableFolders = mockFolders.map((folder)=>({
-                name: folder.name,
-                ownerId:user.userId,
-                parent: rootFolders[0]!.id,
-            }));
-
-            await db.insert(folders_table).values(insertableFolders);
+            const foldersIds = folders.map(folder => folder.id);
+            
+            //const rootFolders = await db.insert(folders_table).values({
+            //name:"root",
+            //ownerId: user.userId,
+            //parent:null,
+            //}).$returningId();
+//
+            //const insertableFolders = mockFolders.map((folder)=>({
+            //    name: folder.name,
+            //    ownerId: user.userId,
+            //    parent: rootFolders[0]!.id,
+            //}));
+//
+            //await db.insert(folders_table).values(insertableFolders);
             
             const insertableFiles = mockFiles.map((file) => ({
                 name: file.name,
                 ownerId: user.userId,
-                parent: file.parent ?? rootFolders[0]!.id,
+                parent: foldersIds[Math.floor(Math.random() * foldersIds.length)] ?? 2251799813685249,
                 size: file.size,
+                fileKey: null,
                 url: file.url
             }));
-
+//
             await db.insert(files_table).values(insertableFiles);
-
-        }
-     }  
+//
+        
+       
+    }
+}
     >  
        <button type="submit"> Seed </button>
      

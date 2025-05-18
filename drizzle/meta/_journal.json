@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "singlestore",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "1",
+      "when": 1747500961574,
+      "tag": "0000_sharp_random",
+      "breakpoints": true
+    }
+  ]
+}

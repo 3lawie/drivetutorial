@@ -16,6 +16,7 @@ export const files_table = createTable(
     name: text("name").notNull(), // File name (required)
     size: bigint("size",{mode:"number", unsigned: true}).notNull(), // File size in bytes (required)
     url: text("url").notNull(), // File URL (required)
+    fileKey: text("fileKey"),
     parent: bigint("parent", { mode: "number", unsigned: true }).notNull(), // Parent folder ID (required)
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },

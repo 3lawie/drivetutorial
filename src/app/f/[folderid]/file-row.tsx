@@ -1,9 +1,12 @@
 import { type FolderType, type File} from "~/lib/mock-data"
-import { Folder as FolderIcon, FileIcon } from "lucide-react"
+import { Folder as FolderIcon, FileIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link";
+import { Button } from "~/components/ui/button";
+import { deleteFile } from "~/server/action";
+import { useRouter } from "next/navigation";
  export function FileRow(props : {file : File , lastFile: boolean}) {
     const {file}= props;
-
+    const navigate =useRouter();
     return (
         <li key={file.id} className={`px-6 py-4 border-gray-700 hover:bg-gray-750 transition duration-200 ${props.lastFile ? '' : 'border-b'}`} >
             <div className="grid grid-cols-12 gap-4 items-center">
@@ -17,9 +20,13 @@ import Link from "next/link";
                        {file.name}
                        </a>
                 </div>
-                <div className="col-span-3 text-gray-400">File</div>
                 <div className="col-span-3 text-gray-400">2 MB</div>
-            </div>
+                <div className="col-span-3 text-gray-400">
+                  <Button variant="ghost" onClick={() => deleteFile(file.id) }>
+                    <Trash2Icon className="mr-3" size={20} onClick={()=> setTimeout(() => {navigate.refresh()}, 1200)}  ></Trash2Icon>
+                  </Button>
+                </div>
+                </div>
         </li>
     )
 }

@@ -57,7 +57,8 @@ export const ourFileRouter = {
           name: file.name,
           size: file.size,
           url: file.ufsUrl,
-          parent: metadata.currentFolderId ,
+          fileKey: file.key,
+          parent: metadata.currentFolderId,
           ownerId: metadata.userId,
           createdAt: new Date(),
         },
@@ -65,7 +66,7 @@ export const ourFileRouter = {
       });
     
 
-      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+      // !!! Whatever is returned here is sent to the client side `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };
     }),
 } satisfies FileRouter;
