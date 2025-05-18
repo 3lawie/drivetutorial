@@ -8,16 +8,7 @@ import { redirect } from "next/navigation"
 
 export default function Home() {
   return (
-    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-zinc-950">
-      {/* Background gradient with subtle violet */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950" />
-
-      {/* Accent gradients with yellow, red, and violet */}
-      <div className="absolute -left-20 top-1/3 h-[300px] w-[300px] rounded-full bg-amber-900/10 blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 h-[250px] w-[250px] rounded-full bg-red-950/10 blur-3xl" />
-      <div className="absolute left-1/3 top-1/4 h-[400px] w-[400px] rounded-full bg-violet-950/10 blur-3xl" />
-
-      {/* Logo in top left */}
+  <>    {/* Logo in top left */}
       <div className="absolute left-8 top-6 z-10 flex items-center gap-2">
         <Cloud className="h-5 w-5 text-amber-200/80" />
         <span className="text-lg font-bold text-zinc-200">T3 Drive FST</span>
@@ -93,6 +84,6 @@ export default function Home() {
       <div className="absolute bottom-6 left-0 right-0 z-10 flex justify-center">
         <div className="text-xs text-zinc-500">© 2025 T3 Drive FST. All rights reserved.</div>
       </div>
-    </div>
+    </>
   )
 }

@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "~/server/db";
-import { type DB_FileType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
+import { type DB_FileType, DB_FolderType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import { asc, eq , desc, and, isNull } from "drizzle-orm";
 import { type File, type FolderType } from "~/lib/mock-data";
 
@@ -56,5 +56,36 @@ export const MUTATIONS ={
         return db.insert(filesSchema).values({
             ...input.file
         });
-        }
+        },
+        onBoardUser:async function(userId:string){
+            const rootFolder = await db.insert(foldersSchema).values({
+                name:"Root",
+                parent:null,
+                ownerId:userId,
+            }).$returningId();
+
+            const rootFolderId= rootFolder[0]!.id;
+
+            await db.insert(foldersSchema).values(
+                [
+                {
+                    name:"Trash",
+                    parent:rootFolderId,
+                    ownerId:userId,
+                },
+                {
+                    name:"Shared",
+                    parent:rootFolderId,
+                    ownerId:userId,
+                },
+                {
+                    name:"Documents",
+                    parent:rootFolderId,
+                    ownerId:userId
+                }
+
+            ])
+
+            return rootFolderId;
+         }
 }
