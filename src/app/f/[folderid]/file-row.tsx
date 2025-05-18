@@ -21,9 +21,10 @@ import { useRouter } from "next/navigation";
                        </a>
                 </div>
                 <div className="col-span-3 text-gray-400">2 MB</div>
-                <div className="col-span-3 text-gray-400">
-                  <Button variant="ghost" onClick={() => deleteFile(file.id) }>
-                    <Trash2Icon className="mr-3" size={20} onClick={()=> setTimeout(() => {navigate.refresh()}, 1200)}  ></Trash2Icon>
+                <div className="col-span-3 text-gray-400 hover:text-black">
+                  <Button variant="ghost" className="hover:bg-slate-200 rounded-[8px]" 
+                  onClick={() => deleteFile(file.id) }>
+                    <Trash2Icon className="mr-3" color="#C5172E" size={20} onClick={()=> setTimeout(() => {navigate.refresh()}, 1200)}  ></Trash2Icon>
                   </Button>
                 </div>
                 </div>
