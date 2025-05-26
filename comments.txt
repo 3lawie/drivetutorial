@@ -22,5 +22,3 @@ declare module "drizzle-kit" {
 - {tailwind config}
 
 - {next route and navigate[navigate to refresh or update page] }
-
--transaction in 
