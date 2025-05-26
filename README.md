@@ -56,6 +56,19 @@ just finished connection database, next steps:
 ## 18-5-2025
 - [x] Update database for UploadThing file Key
 - [x] update deletion for files and refresh by custom cookie
+- [x] Add analytics
+- [x] Add delete file
+
+## 19-5-2025
+- [x] Real Homepage + onBoarding
+
 
 -- HomeWorks:
 - Folder deletion 
+- Folder creation
+- Folder rename
+- access Control[ownerId checks]
+- make file view page[self rendering]
+- toasts[loading]
+- Gray out a row while it being deleted
+- file types storage
