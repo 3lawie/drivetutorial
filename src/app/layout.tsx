@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 import { type Metadata } from "next";
-import {ClerkProvider} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs';
 import { env } from "~/env.js";
 import { PostHogProvider } from "./_providers/posthog-provider";
 
@@ -15,8 +15,8 @@ export default function RootLayout({
 }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body>
+      <html lang="en" suppressHydrationWarning>
+        <body suppressHydrationWarning>
           <PostHogProvider>
             {children}
           </PostHogProvider>
