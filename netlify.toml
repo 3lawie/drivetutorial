@@ -18,4 +18,4 @@
 
    [[plugins]]
      package = "@netlify/plugin-nextjs"
-     Error: export const dynamic = "force-static"/export const revalidate not configured on route "/api/uploadthing" with "output: export"
+     Error= export const dynamic = "force-static"/export const revalidate not configured on route "/api/uploadthing" with "output: export"
