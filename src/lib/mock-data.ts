@@ -1,4 +1,4 @@
-export interface File {
+export interface FileType {
   id: number
   name: string 
   url: string
@@ -18,7 +18,7 @@ export const mockFolders: FolderType[]=[
   { id: 3, name: "Work", parent: 1 },
   { id: 8, name: "Presentations", parent: 3 },
 ]
-export const mockFiles: File[] = [
+export const mockFiles: FileType[] = [
   { id: 4, name: "Resume.pdf",  url: "/files/resume.pdf", parent: 1, size: 1.2e6 ,fileKey:null },
   { id: 5, name: "Project Proposal.docx",  url: "/files/proposal.docx", parent: 1, size: 2.5e6 ,fileKey:null},
   { id: 6, name: "Vacation.jpg",  url: "/files/vacation.jpg", parent: 2, size: 3.7e6 ,fileKey:null},

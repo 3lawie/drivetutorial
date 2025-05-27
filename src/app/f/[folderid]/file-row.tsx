@@ -1,10 +1,10 @@
-import { type FolderType, type File} from "~/lib/mock-data"
+import { type FolderType, type FileType} from "~/lib/mock-data"
 import { Folder as FolderIcon, FileIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { deleteFile } from "~/server/action";
 import { useRouter } from "next/navigation";
- export function FileRow(props : {file : File , lastFile: boolean}) {
+ export function FileRow(props : {file : FileType , lastFile: boolean}) {
     const {file}= props;
     const navigate =useRouter();
     return (

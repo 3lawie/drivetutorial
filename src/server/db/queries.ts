@@ -1,8 +1,8 @@
 import "server-only";
 import { db } from "~/server/db";
-import { type DB_FileType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
+import { type DB_FileType, type DB_FolderType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import { asc, eq , desc, and, isNull } from "drizzle-orm";
-import { type File, type FolderType } from "~/lib/mock-data";
+import { error } from "console";
 
 export const QUERIES ={
     getAllParentsForFolders: async function (folderId: number){
@@ -18,17 +18,26 @@ export const QUERIES ={
         }
         return parents;
         },
-    getFolders: async function (folderId: number): Promise<FolderType[]> {
+    getFolders: async function (folderId: number): Promise<DB_FolderType[]> {
         return db
         .select()
         .from(foldersSchema)
         .where(eq(foldersSchema.parent, folderId)).orderBy(asc(folders_table.id))
         },
-    getFiles: async function  (folderId :number ) :Promise<File[]> { 
-        return  db.
-        select().
-        from(filesSchema).
-        where(eq(filesSchema.parent, folderId)).orderBy(desc(filesSchema.id))
+        getUserFolders: async function (userId:string): Promise<DB_FolderType[]> {
+            const userFolders= db
+                .select()
+                .from(foldersSchema)
+                .where(eq(foldersSchema.ownerId, userId));
+            
+                return userFolders;
+        },
+    getFiles: async function (folderId: number): Promise<DB_FileType[]> { 
+        return db
+            .select()
+            .from(filesSchema)
+            .where(eq(filesSchema.parent, folderId))
+            .orderBy(desc(filesSchema.id))
     },
     getFolderById: async function (folderId: number ) {
       const folder = await db
@@ -56,5 +65,45 @@ export const MUTATIONS ={
         return db.insert(filesSchema).values({
             ...input.file
         });
-        }
-}
+        },
+        createFolder: async function ({ folder }: { folder: Omit<DB_FolderType, "id"> }){
+            db.insert(foldersSchema).values({
+                name:folder.name,
+                ownerId:folder.ownerId,
+                parent:folder.parent,
+            })
+        },
+        createRootFolder: async function (userId: string) {
+            const rootFolder = await db.insert(foldersSchema).values({
+                name: "Root",
+                parent: null,
+                ownerId: userId,
+            }).$returningId();; 
+            
+
+            return rootFolder[0];
+        },
+        OnBoardFolders: async (userId: string, rootFolder: number) => {
+            const folders = await db
+            .insert(foldersSchema)
+            .values([
+                {
+                name:"Documents",
+                parent:rootFolder,
+                ownerId:userId
+            },
+                {
+                name:"Trash",
+                parent:rootFolder,
+                ownerId:userId
+            },
+                {
+                name:"Shared",
+                parent:rootFolder,
+                ownerId:userId
+            },
+            ])
+            return folders ;
+        },
+    }
+

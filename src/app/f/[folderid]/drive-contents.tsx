@@ -1,6 +1,6 @@
 "use client"
 
-import { type File, type FolderType } from "../../../lib/mock-data"
+import { type FileType, type FolderType } from "../../../lib/mock-data"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { FileRow, FolderRow } from "./file-row"
@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation"
 export default function DriveContents(
   props :
    {
-    files: File[],//$inferSelects[]
+    files: FileType[],//$inferSelects[]
     folders: FolderType[],
     parents: FolderType[],
     isFile: boolean,

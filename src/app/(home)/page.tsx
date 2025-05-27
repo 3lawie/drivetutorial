@@ -2,9 +2,9 @@ import Link from "next/link"
 import { ArrowRight, Cloud } from "lucide-react"
 
 import { Button } from "~/components/ui/button"
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { SignInButton, SignUpButton } from "@clerk/nextjs"
 
 export default function Home() {
   return (
@@ -24,10 +24,7 @@ export default function Home() {
       </div>
 
       {/* Login/Signup in top right */}
-      <div className="absolute right-8 top-6 z-10 flex items-center gap-4">
-     <SignInButton forceRedirectUrl={"/drive"}/>
-           </div>
-
+   
       {/* Main content - centered horizontally */}
       <div className="relative z-10 flex w-full max-w-7xl flex-row items-center justify-between px-8">
         {/* Left side - Main message */}
@@ -43,22 +40,19 @@ export default function Home() {
             collaborate in one seamless experience.
           </p>
           <div className="mt-8">
-          <form action={async () => {
-            "use server"
-            const session = await auth();
-            if(!session.userId){
-              return redirect("/sign-in");
-            }
-
-            return redirect("/drive");
-           }}>
-
-<Button type="submit" className="bg-gradient-to-r from-zinc-800 via-zinc-800 to-zinc-900 px-8 py-6 text-lg text-zinc-100 hover:from-zinc-700 hover:to-zinc-800">
-              Get Started <ArrowRight className="ml-2 h-5 w-5 text-amber-200/80" />
-            </Button>
-           </form>
-
-           </div>
+            <form action={async () => {
+              "use server"
+              const session = await auth()
+              if (!session?.userId) {
+                redirect("/sign-in")
+              }
+              redirect("/drive")
+            }}>
+              <Button type="submit" className="rounded-[6px] bg-gradient-to-r from-zinc-800 via-zinc-800 to-zinc-900 px-8 py-6 text-lg text-zinc-100 hover:from-zinc-700 hover:to-zinc-800">
+                Get Started <ArrowRight className="ml-2 h-5 w-5 text-amber-200/80" />
+              </Button>
+            </form>
+          </div>
         </div>
 
         {/* Right side - Visual element with color accents */}
