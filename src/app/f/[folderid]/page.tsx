@@ -11,11 +11,12 @@ export default async function GoogleDriveClone(
         }>
     }) {
     const params = await props.params;
-    //const safeFolderId =Number.isNaN(Number(params.folderId)) ? "Invalid Id" : parseInt(params.folderId)
-    // OR
-    const parsedFolderId = parseInt(params.folderId);
-    if (isNaN(parsedFolderId)) {
-        return <div>{"Invalid Id Input"}</div>
+    // Parse folderId - trim any whitespace and parse as nu mber
+    const cleanId = params.folderId.trim();
+    const parsedFolderId = Number(cleanId);
+
+    if (!cleanId || !Number.isFinite(parsedFolderId) || parsedFolderId < 0) {
+        return <div>{`Invalid Id Input: "${params.folderId}"`}</div>
     }
 
     const [files, folders, parents] = await Promise.all
