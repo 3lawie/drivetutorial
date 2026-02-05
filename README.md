@@ -72,3 +72,6 @@ just finished connection database, next steps:
 - toasts[loading]
 - Gray out a row while it being deleted
 - file types storage
+
+## 27-5-2025
+- [] setting recursive folder children

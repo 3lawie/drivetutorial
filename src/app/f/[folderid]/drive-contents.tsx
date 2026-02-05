@@ -4,7 +4,7 @@ import { type FileType, type FolderType } from "../../../lib/mock-data"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { FileRow, FolderRow } from "./file-row"
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
+import { AuthButton } from "~/components/auth-button"
 import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
 
@@ -49,12 +49,7 @@ export default function DriveContents(
             ))}
           </div>
           <div>
-          <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+            <AuthButton />
           </div>
         </div>
         {props.isFile ? (

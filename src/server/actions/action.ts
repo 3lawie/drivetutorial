@@ -1,11 +1,12 @@
 "use server"
 
 import { auth } from "@clerk/nextjs/server";
-import { db } from "./db";
-import { files_table } from "./db/schema";
+import { db } from "../db";
+import { files_table } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
 import { cookies } from "next/headers";
+import { MUTATIONS } from "../db/queries";
 
 
 // use server have endpoint which is the exported variables 
@@ -14,7 +15,6 @@ import { cookies } from "next/headers";
 const utApi= new UTApi();
 
 export async function deleteFile(fileId: number){
-
     const session = await auth();
     if (!session.userId) {
         return { error: "Unauthorized"}
@@ -68,7 +68,13 @@ export async function deleteFile(fileId: number){
    return {success: true, error: "Null",message:"Deleted from DB and UploadThing"}
 }
 
-/*
+
+ export async function deleteFolderAction(id: number) {
+     
+ const user = await auth();
+ if (!user.userId) throw new Error("Not authenticated");
+ return MUTATIONS.deleteFolder(id,user.userId);
+ }/*
 !revalidate the page by creating new cookie which send updated content
 ! cookie time is same as deletion request
 ?const c = await cookies();

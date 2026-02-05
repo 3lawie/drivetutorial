@@ -1,7 +1,7 @@
 /*
 !import "server-only"*/ //security but can import in the dev mode
 // schema.ts
-import {text, index, singlestoreTableCreator, bigint, timestamp } from "drizzle-orm/singlestore-core";
+import { text, index, singlestoreTableCreator, bigint, timestamp } from "drizzle-orm/singlestore-core";
 
 // `createTable` ensures all tables are prefixed with `drive-tutorial_` for organization
 export const createTable = singlestoreTableCreator((name) => `drive_tutorial_${name}`);
@@ -12,9 +12,9 @@ export const files_table = createTable(
   "files_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
-    ownerId:text("owner_id").notNull() ,
+    ownerId: text("owner_id").notNull(),
     name: text("name").notNull(), // File name (required)
-    size: bigint("size",{mode:"number", unsigned: true}).notNull(), // File size in bytes (required)
+    size: bigint("size", { mode: "number", unsigned: true }).notNull(), // File size in bytes (required)
     url: text("url").notNull(), // File URL (required)
     fileKey: text("fileKey"),
     parent: bigint("parent", { mode: "number", unsigned: true }).notNull(), // Parent folder ID (required)
@@ -22,7 +22,7 @@ export const files_table = createTable(
   },
   (t) => {
     return [index("parent_index").on(t.parent),
-      index("owner_id_index").on(t.ownerId),
+    index("owner_id_index").on(t.ownerId),
     ]; // Index for faster lookups by parent
   }
 );
@@ -35,19 +35,19 @@ export const folders_table = createTable(
   "folders_table",
   {
     id: bigint("id", { mode: "number", unsigned: true }).primaryKey().autoincrement(),
-    ownerId:text("owner_id").notNull() ,
+    ownerId: text("owner_id").notNull(),
     name: text("name").notNull(), // Folder name (required)
     parent: bigint("parent", { mode: "number", unsigned: true }), // Optional parent folder ID
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (t) => {
     return [index("parent_index").on(t.parent),
-      index("owner_id_index").on(t.ownerId)
+    index("owner_id_index").on(t.ownerId)
     ]; // Index for faster lookups by parent
   }
 );
 
-export type DB_FolderType= typeof folders_table.$inferSelect;
+export type DB_FolderType = typeof folders_table.$inferSelect;
 
 //!deleted since we use singleStore
 // Example model schema from the Drizzle docs

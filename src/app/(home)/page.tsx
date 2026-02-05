@@ -1,10 +1,7 @@
-import Link from "next/link"
 import { ArrowRight, Cloud } from "lucide-react"
-
 import { Button } from "~/components/ui/button"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { SignInButton, SignUpButton } from "@clerk/nextjs"
 
 export default function Home() {
   return (
@@ -24,7 +21,7 @@ export default function Home() {
       </div>
 
       {/* Login/Signup in top right */}
-   
+
       {/* Main content - centered horizontally */}
       <div className="relative z-10 flex w-full max-w-7xl flex-row items-center justify-between px-8">
         {/* Left side - Main message */}

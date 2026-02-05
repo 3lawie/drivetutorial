@@ -2,7 +2,8 @@ import "server-only";
 import { db } from "~/server/db";
 import { type DB_FileType, type DB_FolderType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import { asc, eq , desc, and, isNull } from "drizzle-orm";
-import { error } from "console";
+import { cookies } from "next/headers";
+import { deleteFile } from "../actions/action";
 
 export const QUERIES ={
     getAllParentsForFolders: async function (folderId: number){
@@ -54,7 +55,44 @@ export const QUERIES ={
             eq(foldersSchema.ownerId, userId),
             isNull(foldersSchema.parent)))
         return folder[0];
+    },
+    getFolderChildren: async function (id: number,userId:string): Promise<{finalFiles:DB_FileType[], finalFolders:DB_FolderType[]}> {
+        
+
+        const finalFiles: DB_FileType[] = [];
+        const finalFolders: DB_FolderType[]=[];
+
+        
+        const foldersChildrenRequest = db
+            .select()
+            .from(foldersSchema)
+            .where(
+                and(
+                    eq(foldersSchema.parent, id),
+                    eq(foldersSchema.ownerId, userId)
+                ));
+        const filesChildrenRequest= db
+            .select()
+            .from(filesSchema)
+            .where(
+                and(
+                    eq(filesSchema.parent, id),
+                    eq(filesSchema.ownerId, userId)
+                )
+            );
+          
+            const [files, folders] = await Promise.all([filesChildrenRequest, foldersChildrenRequest]) as [DB_FileType[], DB_FolderType[]];
+            finalFiles.push(...files);
+            finalFolders.push(...folders);
+            
+            for (const child of folders) {
+                const {finalFiles: childFiles, finalFolders: childFolders} = await this.getFolderChildren(child.id,userId);
+                finalFiles.push(...childFiles);
+                finalFolders.push(...childFolders);
+            }
+            return {finalFiles, finalFolders};
     }
+
 }
 
 export const MUTATIONS ={
@@ -78,7 +116,8 @@ export const MUTATIONS ={
                 name: "Root",
                 parent: null,
                 ownerId: userId,
-            }).$returningId();; 
+            }).$returningId();
+
             
 
             return rootFolder[0];
@@ -105,5 +144,47 @@ export const MUTATIONS ={
             ])
             return folders ;
         },
-    }
+        deleteFolder: async (id: number, userId:string)=>{
+            
+            
+            const {finalFiles:files , finalFolders:folders} = await  QUERIES.getFolderChildren(id, userId);
+            
+            console.log("files", files);
+            console.log("folders", folders);
+            console.log("filesId", id);
+        
+            
+            //const filesDeletion = files.map((file) => {
+            //    return deleteFile(file.id);
+            //});
+            //
+            //const foldersDeletion = folders.map((folder) => {
+            //    return db.delete(foldersSchema)
+            //        .where(and(
+            //            eq(foldersSchema.id, folder.id),
+            //            eq(foldersSchema.ownerId, userId)
+            //        ));
+            //});
+            //
+        //
+            //const folderDeletion= db
+            //.delete(foldersSchema)
+            //.where(
+            //    and(
+            //        eq(foldersSchema.id, id),
+            //        eq(foldersSchema.ownerId, userId)
+            //    ));
+//
+            //    const c = await cookies();
+            //
+            //    c.set("force-refresh", JSON.stringify(Math.random))
+            // 
+//
+            //    return Promise.all([filesDeletion,folderDeletion,foldersDeletion]);
 
+         
+        },
+    }
+    
+
+    
