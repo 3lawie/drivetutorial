@@ -11,7 +11,11 @@ export default async function GoogleDriveClone(
         }>
     }) {
     const params = await props.params;
-    // Parse folderId - trim any whitespace and parse as nu mber
+    // Parse folderId - trim any whitespace and parse as number
+    if (!params.folderId) {
+        return <div>{"Missing folder ID"}</div>
+    }
+
     const cleanId = params.folderId.trim();
     const parsedFolderId = Number(cleanId);
 
