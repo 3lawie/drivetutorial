@@ -14,13 +14,11 @@ export default function RootLayout({
 }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body suppressHydrationWarning>
-          <PostHogProvider>
-            {children}
-          </PostHogProvider>
-        </body>
-      </html>
+      <body suppressHydrationWarning>
+        <PostHogProvider>
+          {children}
+        </PostHogProvider>
+      </body>
     </ClerkProvider>
   );
 }
