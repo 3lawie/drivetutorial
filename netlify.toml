@@ -1,3 +1,7 @@
+[build.environment]
+  # Tell Netlify not to scan the Next.js cache folders for secrets
+  SECRETS_SCAN_OMIT_PATHS = ".next/cache/webpack/*,.netlify/.next/cache/webpack/*"
+
 [[redirects]]
   from = "/ingest/static/*"
   to = "https://us-assets.i.posthog.com/static/:splat"
