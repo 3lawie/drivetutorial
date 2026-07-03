@@ -125,21 +125,6 @@ export default function DriveContents(
     })
   }
 
-  const handleCreateFolder = async () => {
-    if (!folderName.trim()) return;
-    setIsCreating(true);
-    try {
-      await createFolderAction(folderName.trim(), props.currentFolderId);
-      setFolderName("");
-      // Use closeFolderForm so it also fixes the history state
-      closeFolderForm();
-      navigate.refresh();
-    } catch (error) {
-      console.error("Failed to create folder:", error);
-    } finally {
-      setIsCreating(false);
-    }
-  };
 
   function handleFolderOptimisticRemove(folderId: number) {
     startTransition(async () => {
