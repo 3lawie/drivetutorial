@@ -1,78 +1,23 @@
 "use server"
 
 import { auth } from "@clerk/nextjs/server";
-import { db } from "../db";
-import { files_table } from "../db/schema";
-import { and, eq } from "drizzle-orm";
-import { UTApi } from "uploadthing/server";
 import { cookies } from "next/headers";
 import { MUTATIONS } from "../db/queries";
-
-
-// use server have endpoint which is the exported variables 
-// this can let user access the file and do whatever he want [deleting, injecting , take a role]
-
-const utApi = new UTApi();
 
 export async function deleteFile(fileId: number) {
     const session = await auth();
     if (!session.userId) {
         return { error: "Unauthorized" }
     }
-    const [file] = await db.
-        select().
-        from(files_table).
-        where(and(
-            eq(files_table.id, fileId),
-            eq(files_table.ownerId, session.userId),
-        ));
-    if (!file) {
-        return { error: "File not found" }
-    }
 
-    /////!This is not optimal we should have the file key as a property for the file
-    //? in case we don't have a fileKey
-
-    if (!file.fileKey) {
-
-        if (file.url.includes("https://grvzhjbjfb.ufs.sh/f/")) {
-            const utApiResult = await utApi.deleteFiles([file.url.replace("https://grvzhjbjfb.ufs.sh/f/", "")]);
-            console.log(utApiResult);
-        } else {
-
-            const dbDeleteResult = await db.delete(files_table).where(eq(files_table.id, fileId));
-
-            console.log(dbDeleteResult);
-
-            const c = await cookies();
-
-            c.set("force-refresh", JSON.stringify(Math.random))
-
-            return { success: true, error: "Null", message: "Deleted from DB only" }
-        }
-
-    } else {
-        const utApiResult = await utApi.deleteFiles(file.fileKey);
-        console.log(utApiResult);
-    }
-
-    const dbDeleteResult = await db.delete(files_table).where(eq(files_table.id, fileId));
-
-    console.log(dbDeleteResult);
-
-
-    const c = await cookies();
-
-    c.set("force-refresh", JSON.stringify(Math.random))
-
-    return { success: true, error: "Null", message: "Deleted from DB and UploadThing" }
+    // Delegate to MUTATIONS which handles the DB and UploadThing logic safely
+    return MUTATIONS.deleteFile(fileId, session.userId);
 }
 
-
 export async function deleteFolderAction(id: number) {
-
     const user = await auth();
     if (!user.userId) throw new Error("Not authenticated");
+
     return MUTATIONS.deleteFolder(id, user.userId);
 }
 
@@ -92,9 +37,3 @@ export async function createFolderAction(name: string, parentId: number) {
     const c = await cookies();
     c.set("force-refresh", JSON.stringify(Math.random()));
 }
-/*
-!revalidate the page by creating new cookie which send updated content
-! cookie time is same as deletion request
-?const c = await cookies();
-?c.set("force-refresh", JSON.stringify(Math.random))
-*/

@@ -44,10 +44,9 @@ export default function DriveContents(
   return (
     <div className="min-h-screen bg-surface-0 text-gray-100 p-4 md:p-8 lg:p-10">
       <div className="mx-auto max-w-5xl">
-
         {/* ── Header: Breadcrumbs + Actions ── */}
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-center md:justify-between">
-          {/* Breadcrumbs - Scrollable on mobile */}
+          {/* Breadcrumbs */}
           <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-sm pb-2" aria-label="Breadcrumb">
             <Link
               href={`/f/2251799813685249`}
@@ -131,7 +130,6 @@ export default function DriveContents(
         ) : (
           <>
             {emptyFolder ? (
-              /* ── Empty State ── */
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-surface-2">
                   <FolderOpen size={36} className="text-gray-500" />
@@ -151,9 +149,7 @@ export default function DriveContents(
                 </div>
               </div>
             ) : (
-              /* ── File/Folder Table ── */
               <div className="overflow-hidden rounded-xl border border-gray-800/60 bg-surface-1 shadow-xl shadow-black/10">
-                {/* Table Header - Hidden on mobile */}
                 <div className="hidden border-b border-gray-800/60 px-5 py-3 md:block">
                   <div className="grid grid-cols-12 gap-4 text-xs font-medium uppercase tracking-wider text-gray-500">
                     <div className="col-span-6">Name</div>
@@ -162,7 +158,6 @@ export default function DriveContents(
                     <div className="col-span-2 text-right">Actions</div>
                   </div>
                 </div>
-                {/* Rows */}
                 <ul>
                   {props.folders.map((folder, i) => (
                     <FolderRow key={folder.id} folder={folder} index={i} />
@@ -182,6 +177,10 @@ export default function DriveContents(
           <UploadButton
             endpoint="driveUploader"
             onClientUploadComplete={() => navigate.refresh()}
+            onUploadError={(error: Error) => {
+              // ADDED: Error handler so uploads don't fail silently
+              alert(`ERROR! ${error.message}`);
+            }}
             input={{
               folderId: props.currentFolderId,
             }}
