@@ -1,9 +1,13 @@
+"use client"
+
 import { type FolderType, type FileType } from "~/lib/mock-data"
 import { Folder as FolderIcon, Trash2Icon, FileText, Image as ImageIcon, FileSpreadsheet, Film, Music, Archive, File } from "lucide-react"
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { deleteFile, deleteFolderAction } from "~/server/actions/action";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 /** Format bytes into a human-readable string */
 function formatFileSize(bytes: number): string {
@@ -36,12 +40,25 @@ function getFileIcon(name: string) {
 export function FileRow(props: { file: FileType, lastFile: boolean, index: number }) {
   const { file } = props;
   const navigate = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteFile(file.id);
+      toast.success(`Deleted "${file.name}"`);
+      navigate.refresh();
+    } catch (error) {
+      toast.error("Failed to delete file");
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <li
-      className={`group flex animate-fade-in-up items-center gap-4 px-4 py-3 transition-colors duration-150 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row ${props.lastFile ? "" : "border-b border-gray-800/40"}`}
+      className={`group flex items-center gap-4 px-4 py-3 transition-all duration-200 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row animate-fade-in-up ${props.lastFile ? "" : "border-b border-gray-800/40"} ${isDeleting ? "pointer-events-none opacity-30 scale-[0.98]" : ""}`}
     >
-      {/* Name - Flexes to fill space on mobile, takes 6 cols on desktop */}
+      {/* Name — always visible */}
       <div className="flex min-w-0 flex-1 items-center gap-3 sm:col-span-6">
         {getFileIcon(file.name)}
         <a
@@ -53,36 +70,38 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
         </a>
       </div>
 
-      {/* Type - Hidden on mobile */}
+      {/* Type — hidden on mobile */}
       <div className="hidden sm:col-span-2 sm:block">
         <span className="text-xs text-gray-500">
           {file.name.includes(".") ? file.name.split(".").pop()!.toUpperCase() : "File"}
         </span>
       </div>
 
-      {/* Size - Hidden on mobile */}
+      {/* Size — hidden on mobile */}
       <div className="hidden sm:col-span-2 sm:block">
         <span className="text-xs text-gray-500 tabular-nums">
           {formatFileSize(file.size)}
         </span>
       </div>
 
-      {/* Actions - Always visible on mobile, hover on desktop */}
+      {/* Actions — always visible on mobile, hover on desktop */}
       <div className="flex shrink-0 justify-end sm:col-span-2 sm:opacity-0 sm:transition-all sm:duration-150 sm:group-hover:opacity-100">
         <Button
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg hover:bg-red-500/10"
-          onClick={async () => {
-            await deleteFile(file.id);
-            navigate.refresh();
-          }}
+          onClick={handleDelete}
+          disabled={isDeleting}
           aria-label="Delete file"
         >
-          <Trash2Icon
-            className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
-            size={16}
-          />
+          {isDeleting ? (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-transparent" />
+          ) : (
+            <Trash2Icon
+              className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
+              size={16}
+            />
+          )}
         </Button>
       </div>
     </li>
@@ -91,9 +110,23 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
 
 export function FolderRow(props: { folder: FolderType, index: number }) {
   const navigate = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteFolderAction(props.folder.id);
+      toast.success(`Deleted "${props.folder.name}"`);
+      navigate.refresh();
+    } catch (error) {
+      toast.error("Failed to delete folder");
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <li
-      className={`group flex animate-fade-in-up items-center gap-4 border-b border-gray-800/40 px-4 py-3 transition-colors duration-150 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row`}
+      className={`group flex items-center gap-4 border-b border-gray-800/40 px-4 py-3 transition-all duration-200 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row animate-fade-in-up ${isDeleting ? "pointer-events-none opacity-30 scale-[0.98]" : ""}`}
     >
       {/* Name */}
       <div className="flex min-w-0 flex-1 items-center gap-3 sm:col-span-6">
@@ -122,16 +155,18 @@ export function FolderRow(props: { folder: FolderType, index: number }) {
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg hover:bg-red-500/10"
-          onClick={async () => {
-            await deleteFolderAction(props.folder.id);
-            navigate.refresh();
-          }}
+          onClick={handleDelete}
+          disabled={isDeleting}
           aria-label="Delete folder"
         >
-          <Trash2Icon
-            className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
-            size={16}
-          />
+          {isDeleting ? (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-transparent" />
+          ) : (
+            <Trash2Icon
+              className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
+              size={16}
+            />
+          )}
         </Button>
       </div>
     </li>

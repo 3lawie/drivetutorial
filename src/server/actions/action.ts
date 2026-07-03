@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@clerk/nextjs/server";
-import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { MUTATIONS } from "../db/queries";
 
 export async function deleteFile(fileId: number) {
@@ -10,15 +10,18 @@ export async function deleteFile(fileId: number) {
         return { error: "Unauthorized" }
     }
 
-    // Delegate to MUTATIONS which handles the DB and UploadThing logic safely
-    return MUTATIONS.deleteFile(fileId, session.userId);
+    const result = await MUTATIONS.deleteFile(fileId, session.userId);
+    revalidatePath("/f/[folderId]", "page");
+    return result;
 }
 
 export async function deleteFolderAction(id: number) {
     const user = await auth();
     if (!user.userId) throw new Error("Not authenticated");
 
-    return MUTATIONS.deleteFolder(id, user.userId);
+    const result = await MUTATIONS.deleteFolder(id, user.userId);
+    revalidatePath("/f/[folderId]", "page");
+    return result;
 }
 
 export async function createFolderAction(name: string, parentId: number) {
@@ -34,6 +37,5 @@ export async function createFolderAction(name: string, parentId: number) {
         }
     });
 
-    const c = await cookies();
-    c.set("force-refresh", JSON.stringify(Math.random()));
+    revalidatePath("/f/[folderId]", "page");
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { type FileType, type FolderType } from "../../../lib/mock-data"
-import { ChevronRight, FolderPlus, FolderOpen } from "lucide-react"
+import { ChevronRight, FolderPlus, FolderOpen, Upload } from "lucide-react"
 import Link from "next/link"
 import { FileRow, FolderRow } from "./file-row"
 import { AuthButton } from "~/components/auth-button"
@@ -9,6 +9,7 @@ import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react" // Added useEffect
 import { createFolderAction } from "~/server/actions/action"
+import { toast } from "sonner"
 
 export default function DriveContents(
   props: {
@@ -25,6 +26,11 @@ export default function DriveContents(
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+
+  const uploadAppearance = {
+    button: "bg-gradient-to-b from-surface-2 to-surface-1 hover:from-surface-3 hover:to-surface-2 border border-gray-700/50 text-gray-200 rounded-full font-medium text-sm px-8 py-2 shadow-md hover:shadow-lg transition-all duration-200 w-full sm:w-auto focus-within:ring-2 focus-within:ring-blue-500/50 ut-uploading:cursor-not-allowed",
+    allowedContent: "text-gray-500 text-xs mt-2",
+  };
 
   // ─── Android Back Button Listener ───
   useEffect(() => {
@@ -204,12 +210,16 @@ export default function DriveContents(
         )}
 
         {/* ── Upload Area ── */}
-        <div className="mt-8 flex justify-center pb-8">
+        <div className="mt-8 mb-12 flex justify-center pb-8">
           <UploadButton
             endpoint="driveUploader"
-            onClientUploadComplete={() => navigate.refresh()}
+            appearance={uploadAppearance}
+            onClientUploadComplete={() => {
+              toast.success("Upload complete!");
+              navigate.refresh();
+            }}
             onUploadError={(error: Error) => {
-              alert(`ERROR! ${error.message}`);
+              toast.error(`Upload failed: ${error.message}`);
             }}
             input={{
               folderId: props.currentFolderId,

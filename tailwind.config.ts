@@ -79,11 +79,17 @@ const config = {
           from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "progress": {
+          "0%": { width: "0%", opacity: "1" },
+          "50%": { width: "70%", opacity: "1" },
+          "100%": { width: "90%", opacity: "0.5" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in-up": "fade-in-up 0.3s ease-out both",
+        "progress": "progress 2s ease-in-out infinite",
       },
     },
   },

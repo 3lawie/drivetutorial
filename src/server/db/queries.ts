@@ -2,11 +2,10 @@ import "server-only";
 import { db } from "~/server/db";
 import { type DB_FileType, type DB_FolderType, files_table as filesSchema, folders_table, folders_table as foldersSchema } from "~/server/db/schema";
 import { asc, eq, desc, and, isNull } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { UTApi } from "uploadthing/server";
 import { env } from "~/env";
 
-const utApi = new UTApi({ token: env.UPLOADTHING_SECRET });
+const utApi = new UTApi({ token: env.UPLOADTHING_TOKEN });
 
 export const QUERIES = {
     getAllParentsForFolders: async function (folderId: number) {
@@ -156,31 +155,20 @@ export const MUTATIONS = {
             return { error: "File not found" }
         }
 
+        // Delete from UploadThing if applicable
         if (!file.fileKey) {
             if (file.url.includes("https://grvzhjbjfb.ufs.sh/f/")) {
-                const utApiResult = await utApi.deleteFiles([file.url.replace("https://grvzhjbjfb.ufs.sh/f/", "")]);
-                console.log(utApiResult);
+                await utApi.deleteFiles([file.url.replace("https://grvzhjbjfb.ufs.sh/f/", "")]);
             } else {
-                const dbDeleteResult = await db.delete(filesSchema).where(eq(filesSchema.id, fileId));
-                console.log(dbDeleteResult);
-
-                const c = await cookies();
-                c.set("force-refresh", JSON.stringify(Math.random))
-
-                return { success: true, error: "Null", message: "Deleted from DB only" }
+                await db.delete(filesSchema).where(eq(filesSchema.id, fileId));
+                return { success: true, error: null, message: "Deleted from DB only" }
             }
         } else {
-            const utApiResult = await utApi.deleteFiles(file.fileKey);
-            console.log(utApiResult);
+            await utApi.deleteFiles(file.fileKey);
         }
 
-        const dbDeleteResult = await db.delete(filesSchema).where(eq(filesSchema.id, fileId));
-        console.log(dbDeleteResult);
-
-        const c = await cookies();
-        c.set("force-refresh", JSON.stringify(Math.random))
-
-        return { success: true, error: "Null", message: "Deleted from DB and UploadThing" }
+        await db.delete(filesSchema).where(eq(filesSchema.id, fileId));
+        return { success: true, error: null, message: "Deleted from DB and UploadThing" }
     },
     deleteFolder: async (id: number, userId: string) => {
         const { finalFiles: files, finalFolders: folders } = await QUERIES.getFolderChildren(id, userId);
@@ -206,10 +194,6 @@ export const MUTATIONS = {
                 eq(foldersSchema.id, id),
                 eq(foldersSchema.ownerId, userId)
             ));
-
-        const c = await cookies();
-        c.set("force-refresh", JSON.stringify(Math.random()))
-
         return deleteCall
     },
 }
