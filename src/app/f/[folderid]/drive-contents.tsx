@@ -7,9 +7,10 @@ import { FileRow, FolderRow } from "./file-row"
 import { AuthButton } from "~/components/auth-button"
 import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react" // Added useEffect
-import { createFolderAction } from "~/server/actions/action"
+import { useState, useEffect, useTransition, useOptimistic } from "react" // Added useEffect
+import { createFolderAction, deleteFile, deleteFolderAction } from "~/server/actions/action"
 import { toast } from "sonner"
+import { start } from "repl"
 
 export default function DriveContents(
   props: {
@@ -21,7 +22,51 @@ export default function DriveContents(
   }) {
 
   const emptyFolder = [...props.files, ...props.folders].length === 0;
+
   const navigate = useRouter()
+  const [isPending, startTransition] = useTransition();
+
+  type FolderAction =
+    | { type: "add"; name: string; currentFolderId: number }
+    | { type: "remove"; id: number };
+
+  const [optimisticFolders, updateOptimisticFolders] = useOptimistic(
+    props.folders,
+    (state: FolderType[], action: FolderAction) => {
+      switch (action.type) {
+        case "add":
+          return [
+            ...state,
+            {
+              id: Date.now(),
+              name: action.name,
+              parent: action.currentFolderId,
+              ownerId: state[0]?.ownerId || "",
+            } as FolderType
+          ];
+        case "remove":
+          return state.filter((f) => f.id !== action.id);
+        default:
+          return state;
+      }
+    }
+  );
+
+  type FileAction = { type: "remove"; id: number };
+
+  const [optimisticFiles, updateOptimisticFiles] = useOptimistic(
+    props.files,
+    (state: FileType[], action: FileAction) => {
+      switch (action.type) {
+        case "remove":
+          return state.filter((f) => f.id !== action.id);
+        default:
+          return state;
+      }
+    }
+  );
+
+  // const emptyFolder = [...optimisticFiles, ...optimisticFolders].length === 0;
 
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -61,6 +106,25 @@ export default function DriveContents(
     }
   };
 
+  async function handleOptimsticFolderAdd(folder: string) {
+    if (!folder.trim()) return;
+    const name = folder.trim();
+
+    // Immediately close the form and clear the input in the UI
+    closeFolderForm();
+
+    startTransition(async () => {
+      updateOptimisticFolders({ type: "add", name, currentFolderId: props.currentFolderId });
+
+      try {
+        await createFolderAction(name, props.currentFolderId);
+        navigate.refresh();
+      } catch (error) {
+        console.error("Failed to create folder:", error);
+      }
+    })
+  }
+
   const handleCreateFolder = async () => {
     if (!folderName.trim()) return;
     setIsCreating(true);
@@ -77,6 +141,39 @@ export default function DriveContents(
     }
   };
 
+  function handleFolderOptimisticRemove(folderId: number) {
+    startTransition(async () => {
+      updateOptimisticFolders({ type: "remove", id: folderId });
+      await handleDeleteFolder(folderId);
+    });
+  }
+
+  function handleFileOptimisticRemove(fileId: number) {
+    startTransition(async () => {
+      updateOptimisticFiles({ type: "remove", id: fileId });
+      await handleDeleteFile(fileId);
+    });
+  }
+
+  const handleDeleteFile = async (fileId: number) => {
+    try {
+      await deleteFile(fileId);
+      toast.success(`Deleted file`);
+      navigate.refresh();
+    } catch (error) {
+      toast.error("Failed to delete file");
+    }
+  };
+
+  const handleDeleteFolder = async (folderId: number) => {
+    try {
+      await deleteFolderAction(folderId);
+      toast.success(`Deleted "${folderId}"`);
+      navigate.refresh();
+    } catch (error) {
+      toast.error("Failed to delete folder");
+    }
+  };
   return (
     <div className="min-h-screen bg-surface-0 text-gray-100 p-4 md:p-8 lg:p-10">
       <div className="mx-auto max-w-5xl">
@@ -135,7 +232,7 @@ export default function DriveContents(
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleCreateFolder();
+                if (e.key === "Enter") handleOptimsticFolderAdd(folderName);
                 if (e.key === "Escape") { closeFolderForm(); }
               }}
               autoFocus
@@ -143,7 +240,7 @@ export default function DriveContents(
             />
             <button
               id="confirm-create-folder-btn"
-              onClick={handleCreateFolder}
+              onClick={() => handleOptimsticFolderAdd(folderName)}
               disabled={isCreating || !folderName.trim()}
               className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -196,12 +293,12 @@ export default function DriveContents(
                   </div>
                 </div>
                 <ul>
-                  {props.folders.map((folder, i) => (
-                    <FolderRow key={folder.id} folder={folder} index={i} />
+                  {optimisticFolders.map((folder, i) => (
+                    <FolderRow key={folder.id} folder={folder} index={i} DeleteFolder={handleFolderOptimisticRemove} />
                   ))}
-                  {props.files.map((file, index) => {
-                    const lastFile = props.files.length - 1 === index;
-                    return <FileRow key={file.id} file={file} lastFile={lastFile} index={props.folders.length + index} />;
+                  {optimisticFiles.map((file, index) => {
+                    const lastFile = optimisticFiles.length - 1 === index;
+                    return <FileRow key={file.id} file={file} lastFile={lastFile} index={optimisticFolders.length + index} DeleteFile={handleFileOptimisticRemove} />;
                   })}
                 </ul>
               </div>

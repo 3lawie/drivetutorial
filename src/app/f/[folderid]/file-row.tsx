@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { deleteFile, deleteFolderAction } from "~/server/actions/action";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 /** Format bytes into a human-readable string */
@@ -37,26 +37,12 @@ function getFileIcon(name: string) {
   return <File size={20} className={`${iconClass} text-gray-400`} />;
 }
 
-export function FileRow(props: { file: FileType, lastFile: boolean, index: number }) {
+export function FileRow(props: { file: FileType, lastFile: boolean, index: number, DeleteFile: (fileId: number) => void }) {
   const { file } = props;
-  const navigate = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteFile(file.id);
-      toast.success(`Deleted "${file.name}"`);
-      navigate.refresh();
-    } catch (error) {
-      toast.error("Failed to delete file");
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <li
-      className={`group flex items-center gap-4 px-4 py-3 transition-all duration-200 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row animate-fade-in-up ${props.lastFile ? "" : "border-b border-gray-800/40"} ${isDeleting ? "pointer-events-none opacity-30 scale-[0.98]" : ""}`}
+      className={`group flex items-center gap-4 px-4 py-3 transition-all duration-200 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row animate-fade-in-up ${props.lastFile ? "" : "border-b border-gray-800/40"}`}
     >
       {/* Name — always visible */}
       <div className="flex min-w-0 flex-1 items-center gap-3 sm:col-span-6">
@@ -90,43 +76,29 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg hover:bg-red-500/10"
-          onClick={handleDelete}
-          disabled={isDeleting}
+          onClick={() => props.DeleteFile(file.id)}
           aria-label="Delete file"
         >
-          {isDeleting ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-transparent" />
-          ) : (
-            <Trash2Icon
-              className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
-              size={16}
-            />
-          )}
+          <Trash2Icon
+            className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
+            size={16}
+          />
         </Button>
       </div>
     </li>
   )
 }
 
-export function FolderRow(props: { folder: FolderType, index: number }) {
+export function FolderRow(props: { folder: FolderType, index: number, DeleteFolder: (folderId: number) => void }) {
   const navigate = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteFolderAction(props.folder.id);
-      toast.success(`Deleted "${props.folder.name}"`);
-      navigate.refresh();
-    } catch (error) {
-      toast.error("Failed to delete folder");
-      setIsDeleting(false);
-    }
-  };
+
+
+
 
   return (
     <li
-      className={`group flex items-center gap-4 border-b border-gray-800/40 px-4 py-3 transition-all duration-200 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row animate-fade-in-up ${isDeleting ? "pointer-events-none opacity-30 scale-[0.98]" : ""}`}
+      className={`group flex items-center gap-4 border-b border-gray-800/40 px-4 py-3 transition-all duration-200 hover:bg-surface-hover/50 sm:grid sm:grid-cols-12 sm:px-5 sm:py-3.5 stagger-row animate-fade-in-up`}
     >
       {/* Name */}
       <div className="flex min-w-0 flex-1 items-center gap-3 sm:col-span-6">
@@ -155,18 +127,13 @@ export function FolderRow(props: { folder: FolderType, index: number }) {
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg hover:bg-red-500/10"
-          onClick={handleDelete}
-          disabled={isDeleting}
+          onClick={() => props.DeleteFolder(props.folder.id)}
           aria-label="Delete folder"
         >
-          {isDeleting ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-transparent" />
-          ) : (
-            <Trash2Icon
-              className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
-              size={16}
-            />
-          )}
+          <Trash2Icon
+            className="text-gray-500 transition-colors duration-150 group-hover:text-red-400"
+            size={16}
+          />
         </Button>
       </div>
     </li>
