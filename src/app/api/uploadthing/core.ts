@@ -23,28 +23,28 @@ export const ourFileRouter = {
       maxFileCount: 9999,
     },
   }).input(
-      z.object({
-        folderId:z.number(),
-  }))
+    z.object({
+      folderId: z.number(),
+    }))
     // Set permissions and file types for this FileRoute
-    .middleware(async ({input}) => {
+    .middleware(async ({ input }) => {
       // This code runs on your server before upload
-       const user = await auth();
+      const user = await auth();
 
       // If you throw, the user will not be able to upload
       //eslint-disable-next-line @typescript-eslint/only-throw-error
       if (!user.userId) throw new UploadThingError("Unauthorized");
-      
+
       const folder = await QUERIES.getFolderById(input.folderId);
-      
+
       //eslint-disable-next-line @typescript-eslint/only-throw-error
       if (!folder) throw new UploadThingError("Folder not Found");
-      
+
       //eslint-disable-next-line @typescript-eslint/only-throw-error
-       if (folder.ownerId !== user.userId) throw new UploadThingError("Unauthorized");
-       
+      if (folder.ownerId !== user.userId) throw new UploadThingError("Unauthorized");
+
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId : user.userId , currentFolderId: input.folderId};
+      return { userId: user.userId, currentFolderId: input.folderId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
@@ -64,7 +64,7 @@ export const ourFileRouter = {
         },
         userId: metadata.userId,
       });
-    
+
 
       // !!! Whatever is returned here is sent to the client side `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };

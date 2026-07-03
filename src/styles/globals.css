@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base; /* Base styles */
 @tailwind components; /* Component styles */
 @tailwind utilities; /* Utility styles */
@@ -31,12 +33,98 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* Custom surface tokens for layered dark UI */
+    --surface-0: 222 47% 6%;
+    --surface-1: 220 40% 9%;
+    --surface-2: 218 35% 13%;
+    --surface-3: 217 30% 18%;
+    --surface-hover: 217 30% 22%;
+
+    --radius: 0.75rem;
   }
 }
 
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* UploadThing button overrides */
+.ut-button-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[data-ut-element="button"] {
+  background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(224 76% 48%) 100%) !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  padding: 0.5rem 1.25rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-ut-element="button"]:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-ut-element="allowed-content"] {
+  color: hsl(215 20% 50%) !important;
+  font-size: 0.75rem !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Row entrance animation */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out both;
+}
+
+/* Staggered row animation */
+.stagger-row:nth-child(1) { animation-delay: 0ms; }
+.stagger-row:nth-child(2) { animation-delay: 30ms; }
+.stagger-row:nth-child(3) { animation-delay: 60ms; }
+.stagger-row:nth-child(4) { animation-delay: 90ms; }
+.stagger-row:nth-child(5) { animation-delay: 120ms; }
+.stagger-row:nth-child(6) { animation-delay: 150ms; }
+.stagger-row:nth-child(7) { animation-delay: 180ms; }
+.stagger-row:nth-child(8) { animation-delay: 210ms; }
+.stagger-row:nth-child(9) { animation-delay: 240ms; }
+.stagger-row:nth-child(10) { animation-delay: 270ms; }
+
+/* Subtle hover lift for interactive cards */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Group hover for action reveal */
+.group:hover .group-hover-visible {
+  opacity: 1;
+}
+.group-hover-visible {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
