@@ -5,38 +5,34 @@ import { redirect } from "next/navigation"
 
 export default function Home() {
   return (
-    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-zinc-950">
-      {/* Background gradient with subtle violet */}
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-zinc-950 p-6 md:p-10">
+      {/* Background accents */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950" />
-
-      {/* Accent gradients with yellow, red, and violet */}
       <div className="absolute -left-20 top-1/3 h-[300px] w-[300px] rounded-full bg-amber-900/10 blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 h-[250px] w-[250px] rounded-full bg-red-950/10 blur-3xl" />
       <div className="absolute left-1/3 top-1/4 h-[400px] w-[400px] rounded-full bg-violet-950/10 blur-3xl" />
 
-      {/* Logo in top left */}
-      <div className="absolute left-8 top-6 z-10 flex items-center gap-2">
+      {/* Logo - Responsive positioning */}
+      <div className="absolute left-6 top-6 z-10 flex items-center gap-2 md:left-8 md:top-8">
         <Cloud className="h-5 w-5 text-amber-200/80" />
         <span className="text-lg font-bold text-zinc-200">T3 Drive FST</span>
       </div>
 
-      {/* Login/Signup in top right */}
-
-      {/* Main content - centered horizontally */}
-      <div className="relative z-10 flex w-full max-w-7xl flex-row items-center justify-between px-8">
+      {/* Main content - Flex column on mobile, row on desktop */}
+      <div className="relative z-10 flex w-full max-w-7xl flex-col items-center justify-between gap-12 md:flex-row md:gap-8">
         {/* Left side - Main message */}
-        <div className="max-w-xl">
+        <div className="max-w-xl text-center md:text-left">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-100 md:text-5xl lg:text-6xl">
             <span className="bg-gradient-to-r from-amber-200/90 via-zinc-200 to-violet-200/90 bg-clip-text text-transparent">
               Cloud storage
             </span>{" "}
             reimagined for speed
           </h1>
-          <p className="mt-4 text-lg text-zinc-400">
+          <p className="mt-4 text-base text-zinc-400 md:text-lg">
             T3 Drive FST delivers lightning-fast cloud storage with uncompromising security. Store, share, and
             collaborate in one seamless experience.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex justify-center md:justify-start">
             <form action={async () => {
               "use server"
               const session = await auth()
@@ -45,22 +41,23 @@ export default function Home() {
               }
               redirect("/drive")
             }}>
-              <Button type="submit" className="rounded-[6px] bg-gradient-to-r from-zinc-800 via-zinc-800 to-zinc-900 px-8 py-6 text-lg text-zinc-100 hover:from-zinc-700 hover:to-zinc-800">
+              <Button
+                type="submit"
+                className="w-full rounded-[6px] bg-gradient-to-r from-zinc-800 via-zinc-800 to-zinc-900 px-8 py-6 text-base text-zinc-100 hover:from-zinc-700 hover:to-zinc-800 md:text-lg"
+              >
                 Get Started <ArrowRight className="ml-2 h-5 w-5 text-amber-200/80" />
               </Button>
             </form>
           </div>
         </div>
 
-        {/* Right side - Visual element with color accents */}
-        <div className="relative hidden md:block">
-          <div className="relative h-[350px] w-[350px] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 shadow-2xl">
+        {/* Right side - Visual element */}
+        <div className="relative hidden w-full max-w-sm md:block">
+          <div className="relative h-[350px] w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 shadow-2xl backdrop-blur-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 opacity-80" />
 
-            {/* Subtle color accents */}
             <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-red-900/10 blur-3xl" />
             <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-amber-900/10 blur-3xl" />
-            <div className="absolute -bottom-20 right-0 h-40 w-40 rounded-full bg-violet-900/10 blur-3xl" />
 
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative">
@@ -81,7 +78,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-6 left-0 right-0 z-10 flex justify-center">
+      <div className="absolute bottom-6 left-0 right-0 z-10 flex justify-center px-4">
         <div className="text-xs text-zinc-500">© 2025 T3 Drive FST. All rights reserved.</div>
       </div>
     </div>
