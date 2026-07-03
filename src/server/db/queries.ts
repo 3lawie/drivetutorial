@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { UTApi } from "uploadthing/server";
 import { env } from "~/env";
 
-const utApi = new UTApi({ token: env.UPLOADTHING_TOKEN });
+const utApi = new UTApi({ token: env.UPLOADTHING_SECRET });
 
 export const QUERIES = {
     getAllParentsForFolders: async function (folderId: number) {

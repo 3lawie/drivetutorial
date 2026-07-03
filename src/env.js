@@ -10,10 +10,12 @@ export const env = createEnv({
     SINGLESTORE_HOST: z.string(),
     SINGLESTORE_PORT: z.string(),
     SINGLESTORE_DB_NAME: z.string(),
-    SINGLESTORE_SSL_CA: z.string().optional(),
-    UPLOADTHING_TOKEN: z.string(), // <--- ADDED THIS
+    SINGLESTORE_SSL_CA: z.string().optional(), // SSL CA bundle path is optional
+    CLERK_SECRET_KEY: z.string(),
+    UPLOADTHING_TOKEN: z.string(),
   },
   client: {
+
     NEXT_PUBLIC_POSTHOG_KEY: z.string(),
     NEXT_PUBLIC_POSTHOG_HOST: z.string(),
   },
@@ -26,9 +28,10 @@ export const env = createEnv({
     SINGLESTORE_PORT: process.env.SINGLESTORE_PORT,
     SINGLESTORE_DB_NAME: process.env.SINGLESTORE_DB_NAME,
     SINGLESTORE_SSL_CA: process.env.SINGLESTORE_SSL_CA,
-    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN, // <--- ADDED THIS
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
