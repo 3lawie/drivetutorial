@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     SINGLESTORE_USER: z.string(),
     SINGLESTORE_PASS: z.string(),
@@ -14,8 +14,8 @@ export const env = createEnv({
   },
   client: {
 
-    NEXT_PUBLIC_POSTHOG_KEY : z.string(),
-    NEXT_PUBLIC_POSTHOG_HOST : z.string(),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
