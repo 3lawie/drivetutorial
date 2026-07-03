@@ -7,7 +7,7 @@ import { FileRow, FolderRow } from "./file-row"
 import { AuthButton } from "~/components/auth-button"
 import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react" // Added useEffect
 import { createFolderAction } from "~/server/actions/action"
 
 export default function DriveContents(
@@ -26,13 +26,43 @@ export default function DriveContents(
   const [folderName, setFolderName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
+  // ─── Android Back Button Listener ───
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      setShowCreateFolder(false);
+    };
+
+    if (showCreateFolder) {
+      // Push a fake state into history when modal opens
+      window.history.pushState({ modalOpen: true }, "");
+      window.addEventListener("popstate", handlePopState);
+    } else {
+      window.removeEventListener("popstate", handlePopState);
+    }
+
+    // Cleanup listener when component unmounts or modal closes
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [showCreateFolder]);
+
+  const closeFolderForm = () => {
+    setShowCreateFolder(false);
+    setFolderName("");
+    // If we pushed a fake state, pop it so the history stays clean
+    if (window.history.state?.modalOpen) {
+      window.history.back();
+    }
+  };
+
   const handleCreateFolder = async () => {
     if (!folderName.trim()) return;
     setIsCreating(true);
     try {
       await createFolderAction(folderName.trim(), props.currentFolderId);
       setFolderName("");
-      setShowCreateFolder(false);
+      // Use closeFolderForm so it also fixes the history state
+      closeFolderForm();
       navigate.refresh();
     } catch (error) {
       console.error("Failed to create folder:", error);
@@ -44,9 +74,10 @@ export default function DriveContents(
   return (
     <div className="min-h-screen bg-surface-0 text-gray-100 p-4 md:p-8 lg:p-10">
       <div className="mx-auto max-w-5xl">
+
         {/* ── Header: Breadcrumbs + Actions ── */}
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-center md:justify-between">
-          {/* Breadcrumbs */}
+          {/* Breadcrumbs - Scrollable on mobile */}
           <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-sm pb-2" aria-label="Breadcrumb">
             <Link
               href={`/f/2251799813685249`}
@@ -99,7 +130,7 @@ export default function DriveContents(
               onChange={(e) => setFolderName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleCreateFolder();
-                if (e.key === "Escape") { setShowCreateFolder(false); setFolderName(""); }
+                if (e.key === "Escape") { closeFolderForm(); }
               }}
               autoFocus
               className="flex-1 border-none bg-transparent text-sm text-gray-100 placeholder-gray-500 outline-none focus:ring-0"
@@ -114,7 +145,7 @@ export default function DriveContents(
             </button>
             <button
               id="cancel-create-folder-btn"
-              onClick={() => { setShowCreateFolder(false); setFolderName(""); }}
+              onClick={() => closeFolderForm()}
               className="px-3 py-1.5 text-sm text-gray-500 transition-colors duration-150 hover:text-gray-300"
             >
               Cancel
@@ -178,7 +209,6 @@ export default function DriveContents(
             endpoint="driveUploader"
             onClientUploadComplete={() => navigate.refresh()}
             onUploadError={(error: Error) => {
-              // ADDED: Error handler so uploads don't fail silently
               alert(`ERROR! ${error.message}`);
             }}
             input={{
