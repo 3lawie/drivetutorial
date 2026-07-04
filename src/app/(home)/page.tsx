@@ -1,9 +1,28 @@
 import { ArrowRight, Cloud } from "lucide-react"
 import { Button } from "~/components/ui/button"
+import Link from "next/link"
 import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
+import { MUTATIONS, QUERIES } from "~/server/db/queries"
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  let destination = "/sign-in";
+
+  if (session?.userId) {
+    const existingRootFolder = await QUERIES.getRootFolderForUser(session.userId);
+    if (!existingRootFolder) {
+      const newRootFolder = await MUTATIONS.createRootFolder(session.userId);
+      await MUTATIONS.OnBoardFolders(session.userId, newRootFolder!.id);
+      destination = `/f/${newRootFolder!.id}`;
+    } else {
+      const userFolders = await QUERIES.getUserFolders(session.userId);
+      if (userFolders.length < 2) {
+        await MUTATIONS.OnBoardFolders(session.userId, existingRootFolder.id);
+      }
+      destination = `/f/${existingRootFolder.id}`;
+    }
+  }
+
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-zinc-950 p-6 md:p-10">
       {/* Background accents */}
@@ -33,21 +52,13 @@ export default function Home() {
             collaborate in one seamless experience.
           </p>
           <div className="mt-8 flex justify-center md:justify-start">
-            <form action={async () => {
-              "use server"
-              const session = await auth()
-              if (!session?.userId) {
-                redirect("/sign-in")
-              }
-              redirect("/drive")
-            }}>
+            <Link href={destination} className="w-full">
               <Button
-                type="submit"
                 className="w-full rounded-[6px] bg-gradient-to-r from-zinc-800 via-zinc-800 to-zinc-900 px-8 py-6 text-base text-zinc-100 hover:from-zinc-700 hover:to-zinc-800 md:text-lg"
               >
                 Get Started <ArrowRight className="ml-2 h-5 w-5 text-amber-200/80" />
               </Button>
-            </form>
+            </Link>
           </div>
         </div>
 
