@@ -28,6 +28,11 @@ export async function createFolderAction(name: string, parentId: number) {
     const user = await auth();
     if (!user.userId) throw new Error("Not authenticated");
 
+    const parent = await QUERIES.getFolderById(parentId, user.userId);
+    if (!parent) {
+        throw new Error("Unauthorized or parent folder not found");
+    }
+
     await MUTATIONS.createFolder({
         folder: {
             name,

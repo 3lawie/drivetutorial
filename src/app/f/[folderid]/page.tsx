@@ -1,8 +1,7 @@
 import DriveContents from "./drive-contents";
 import { QUERIES } from "~/server/db/queries";
-
-
-
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function GoogleDriveClone(
     props: {
@@ -11,6 +10,12 @@ export default async function GoogleDriveClone(
         }>
     }) {
     const params = await props.params;
+    const session = await auth();
+
+    if (!session.userId) {
+        return redirect("/sign-in");
+    }
+
     // Parse folderid - trim any whitespace and parse as number
     if (!params.folderid) {
         return <div>{"Missing folder ID"}</div>
@@ -25,20 +30,15 @@ export default async function GoogleDriveClone(
 
     const [files, folders, parents] = await Promise.all
         ([
-            QUERIES.getFiles(parsedFolderId),
-            QUERIES.getFolders(parsedFolderId),
-            QUERIES.getAllParentsForFolders(parsedFolderId)
+            QUERIES.getFiles(parsedFolderId, session.userId),
+            QUERIES.getFolders(parsedFolderId, session.userId),
+            QUERIES.getAllParentsForFolders(parsedFolderId, session.userId)
         ]);
-    const isFile = "url" in parents[parents.length - 1]! && "size" in parents[parents.length - 1]!;
-
-
 
     return <DriveContents
         files={files}
         folders={folders}
         parents={parents}
-        isFile={isFile}
         currentFolderId={parsedFolderId}
     ></DriveContents>
 }
-

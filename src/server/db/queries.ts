@@ -8,11 +8,11 @@ import { env } from "~/env";
 const utApi = new UTApi({ token: env.UPLOADTHING_TOKEN });
 
 export const QUERIES = {
-    getAllParentsForFolders: async function (folderId: number) {
+    getAllParentsForFolders: async function (folderId: number, userId: string) {
         const parents = [];
         let currentId: number | null = folderId;
         while (currentId !== null) {
-            const folder = await db.selectDistinct().from(foldersSchema).where(eq(foldersSchema.id, currentId));
+            const folder = await db.selectDistinct().from(foldersSchema).where(and(eq(foldersSchema.id, currentId), eq(foldersSchema.ownerId, userId)));
             if (!folder[0]) {
                 throw new Error("Folder not found")
             }
@@ -21,11 +21,11 @@ export const QUERIES = {
         }
         return parents;
     },
-    getFolders: async function (folderId: number): Promise<DB_FolderType[]> {
+    getFolders: async function (folderId: number, userId: string): Promise<DB_FolderType[]> {
         return db
             .select()
             .from(foldersSchema)
-            .where(eq(foldersSchema.parent, folderId)).orderBy(asc(folders_table.id))
+            .where(and(eq(foldersSchema.parent, folderId), eq(foldersSchema.ownerId, userId))).orderBy(asc(folders_table.id))
     },
     getUserFolders: async function (userId: string): Promise<DB_FolderType[]> {
         const userFolders = db
@@ -35,19 +35,26 @@ export const QUERIES = {
 
         return userFolders;
     },
-    getFiles: async function (folderId: number): Promise<DB_FileType[]> {
+    getFiles: async function (folderId: number, userId: string): Promise<DB_FileType[]> {
         return db
             .select()
             .from(filesSchema)
-            .where(eq(filesSchema.parent, folderId))
+            .where(and(eq(filesSchema.parent, folderId), eq(filesSchema.ownerId, userId)))
             .orderBy(desc(filesSchema.id))
     },
-    getFolderById: async function (folderId: number) {
+    getFolderById: async function (folderId: number, userId: string) {
         const folder = await db
             .select()
             .from(folders_table)
-            .where(eq(folders_table.id, folderId))
+            .where(and(eq(folders_table.id, folderId), eq(folders_table.ownerId, userId)))
         return folder[0];
+    },
+    getFileById: async function (fileId: number, userId: string) {
+        const file = await db
+            .select()
+            .from(filesSchema)
+            .where(and(eq(filesSchema.id, fileId), eq(filesSchema.ownerId, userId)))
+        return file[0];
     },
     getRootFolderForUser: async function (userId: string) {
         const folder = await db.

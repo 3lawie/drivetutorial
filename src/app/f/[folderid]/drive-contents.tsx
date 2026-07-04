@@ -16,11 +16,9 @@ export default function DriveContents(
     files: FileType[],
     folders: FolderType[],
     parents: FolderType[],
-    isFile: boolean,
     currentFolderId: number;
   }) {
 
-  const emptyFolder = [...props.files, ...props.folders].length === 0;
 
   const navigate = useRouter()
   const [isPending, startTransition] = useTransition();
@@ -69,7 +67,6 @@ export default function DriveContents(
     }
   );
 
-  // const emptyFolder = [...optimisticFiles, ...optimisticFolders].length === 0;
 
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -108,6 +105,8 @@ export default function DriveContents(
       window.history.back();
     }
   };
+
+  const emptyFolder = [...props.files, ...props.folders].length === 0;
 
   async function handleOptimsticFolderAdd(folder: string) {
     if (!folder.trim()) return;
@@ -262,55 +261,48 @@ export default function DriveContents(
         )}
 
         {/* ── Content Area ── */}
-        {props.isFile ? (
-          <div className="flex flex-col items-center justify-center py-32 text-gray-400">
-            <p className="text-lg font-medium">File preview</p>
+
+        {emptyFolder ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-surface-2">
+              <FolderOpen size={36} className="text-gray-500" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-200">This folder is empty</h3>
+            <p className="mb-8 max-w-xs text-sm text-gray-500">
+              Upload files or create a folder to get started
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowCreateFolder(true)}
+                className="flex items-center gap-2 rounded-lg border border-gray-700/50 bg-surface-2 px-4 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-surface-3 hover:text-white"
+              >
+                <FolderPlus size={16} />
+                New Folder
+              </button>
+            </div>
           </div>
         ) : (
-          <>
-            {emptyFolder ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-surface-2">
-                  <FolderOpen size={36} className="text-gray-500" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-200">This folder is empty</h3>
-                <p className="mb-8 max-w-xs text-sm text-gray-500">
-                  Upload files or create a folder to get started
-                </p>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setShowCreateFolder(true)}
-                    className="flex items-center gap-2 rounded-lg border border-gray-700/50 bg-surface-2 px-4 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-surface-3 hover:text-white"
-                  >
-                    <FolderPlus size={16} />
-                    New Folder
-                  </button>
-                </div>
+          <div className="overflow-hidden rounded-xl border border-gray-800/60 bg-surface-1 shadow-xl shadow-black/10">
+            <div className="hidden border-b border-gray-800/60 px-5 py-3 md:block">
+              <div className="grid grid-cols-12 gap-4 text-xs font-medium uppercase tracking-wider text-gray-500">
+                <div className="col-span-6">Name</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-2">Size</div>
+                <div className="col-span-2 text-right">Actions</div>
               </div>
-            ) : (
-              <div className="overflow-hidden rounded-xl border border-gray-800/60 bg-surface-1 shadow-xl shadow-black/10">
-                <div className="hidden border-b border-gray-800/60 px-5 py-3 md:block">
-                  <div className="grid grid-cols-12 gap-4 text-xs font-medium uppercase tracking-wider text-gray-500">
-                    <div className="col-span-6">Name</div>
-                    <div className="col-span-2">Type</div>
-                    <div className="col-span-2">Size</div>
-                    <div className="col-span-2 text-right">Actions</div>
-                  </div>
-                </div>
-                <ul>
-                  {optimisticFolders.map((folder, i) => (
-                    <FolderRow key={folder.id} folder={folder} index={i} DeleteFolder={handleFolderOptimisticRemove} />
-                  ))}
-                  {optimisticFiles.map((file, index) => {
-                    const lastFile = optimisticFiles.length - 1 === index;
-                    return <FileRow key={file.id} file={file} lastFile={lastFile}
-                      index={optimisticFolders.length + index} DeleteFile={handleFileOptimisticRemove}
-                      renameFile={handleFileOptimisticRename} />;
-                  })}
-                </ul>
-              </div>
-            )}
-          </>
+            </div>
+            <ul>
+              {optimisticFolders.map((folder, i) => (
+                <FolderRow key={folder.id} folder={folder} index={i} DeleteFolder={handleFolderOptimisticRemove} />
+              ))}
+              {optimisticFiles.map((file, index) => {
+                const lastFile = optimisticFiles.length - 1 === index;
+                return <FileRow key={file.id} file={file} lastFile={lastFile}
+                  index={optimisticFolders.length + index} DeleteFile={handleFileOptimisticRemove}
+                  renameFile={handleFileOptimisticRename} />;
+              })}
+            </ul>
+          </div>
         )}
 
         {/* ── Upload Area ── */}

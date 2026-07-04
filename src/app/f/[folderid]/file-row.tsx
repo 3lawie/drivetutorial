@@ -61,7 +61,8 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
     };
   }, [isRename]);
 
-  const fileExtension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const hasExtension = file.name.includes(".");
+  const fileExtension = hasExtension ? file.name.split(".").pop()?.toLowerCase() ?? "" : "";
 
   return (
     <li
@@ -86,7 +87,10 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
                 setIsRename(false);
               }
               if (e.key === "Enter") {
-                props.renameFile(file.id, fileName.split(".")[0] + "." + fileExtension);
+                const dotIndex = fileName.lastIndexOf(".");
+                const baseName = dotIndex !== -1 ? fileName.substring(0, dotIndex) : fileName;
+                const newName = hasExtension ? `${baseName}.${fileExtension}` : baseName;
+                props.renameFile(file.id, newName);
                 setIsRename(false);
               }
 
