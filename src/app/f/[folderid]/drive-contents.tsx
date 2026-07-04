@@ -81,21 +81,19 @@ export default function DriveContents(
     allowedContent: "text-gray-500 text-xs mt-2",
   };
 
-  // ─── Android Back Button Listener ───
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
       setShowCreateFolder(false);
     };
 
     if (showCreateFolder) {
-      // Push a fake state into history when modal opens
-      window.history.pushState({ modalOpen: true }, "");
+      // Preserve Next.js internal router state when pushing our fake modal state!
+      window.history.pushState({ ...window.history.state, modalOpen: true }, "");
       window.addEventListener("popstate", handlePopState);
     } else {
       window.removeEventListener("popstate", handlePopState);
     }
 
-    // Cleanup listener when component unmounts or modal closes
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
@@ -207,12 +205,18 @@ export default function DriveContents(
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-center md:justify-between">
           {/* Breadcrumbs - Scrollable on mobile */}
           <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-sm pb-2" aria-label="Breadcrumb">
-            <Link
-              href={`/f/${props.parents[0]?.id ?? props.currentFolderId}`}
-              className="flex shrink-0 items-center gap-1.5 rounded-md border border-gray-700/50 bg-surface-2 px-3 py-1.5 font-medium text-gray-300 transition-all duration-200 hover:bg-surface-3 hover:text-white"
-            >
-              My Drive
-            </Link>
+            {props.parents.length === 0 ? (
+              <span className="flex shrink-0 items-center gap-1.5 rounded-md border border-gray-700/50 bg-surface-2 px-3 py-1.5 font-medium text-gray-300">
+                My Drive
+              </span>
+            ) : (
+              <Link
+                href={`/f/${props.parents[0]?.id}`}
+                className="flex shrink-0 items-center gap-1.5 rounded-md border border-gray-700/50 bg-surface-2 px-3 py-1.5 font-medium text-gray-300 transition-all duration-200 hover:bg-surface-3 hover:text-white"
+              >
+                My Drive
+              </Link>
+            )}
             {props.parents.slice(1).map((folder, i) => (
               <div key={folder.id} className="flex shrink-0 items-center">
                 <ChevronRight className="mx-1 text-gray-600" size={14} />

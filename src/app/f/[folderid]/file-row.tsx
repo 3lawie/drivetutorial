@@ -46,17 +46,24 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
     const handlePopState = (e: PopStateEvent) => {
       setIsRename(false);
     };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsRename(false);
+        setFileName(file.name);
+      }
+    };
 
     if (isRename) {
-      // Push a fake state into history when modal opens
-      window.history.pushState({ modalOpen: true }, "");
+      // Preserve Next.js internal router state when pushing our fake modal state!
+      window.history.pushState({ ...window.history.state, modalOpen: true }, "");
       window.addEventListener("popstate", handlePopState);
+      window.addEventListener("keydown", handleEscape);
     } else {
       window.removeEventListener("popstate", handlePopState);
     }
 
-    // Cleanup listener when component unmounts or modal closes
     return () => {
+      window.removeEventListener("keydown", handleEscape);
       window.removeEventListener("popstate", handlePopState);
     };
   }, [isRename]);
@@ -93,6 +100,9 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
                 const newName = hasExtension ? `${baseName}.${fileExtension}` : baseName;
                 props.renameFile(file.id, newName);
                 setIsRename(false);
+                if (window.history.state?.modalOpen) {
+                  window.history.back();
+                }
               }
 
             }}
@@ -159,20 +169,26 @@ export function FolderRow(props: { folder: FolderType, index: number, DeleteFold
   const [folderName, setFolderName] = useState(props.folder.name);
 
   useEffect(() => {
-    const handlePopState = () => {
+    const handlePopState = (e: PopStateEvent) => {
       setIsRename(false);
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsRename(false);
+        setFolderName(props.folder.name);
+      }
     };
 
     if (isRename) {
-      window.history.pushState({ modalOpen: true }, "");
+      window.history.pushState({ ...window.history.state, modalOpen: true }, "");
       window.addEventListener("popstate", handlePopState);
+      window.addEventListener("keydown", handleEscape);
     } else {
-      if (window.history.state?.modalOpen) {
-        window.history.back();
-      }
+      window.removeEventListener("popstate", handlePopState);
     }
 
     return () => {
+      window.removeEventListener("keydown", handleEscape);
       window.removeEventListener("popstate", handlePopState);
     };
   }, [isRename]);
@@ -205,6 +221,9 @@ export function FolderRow(props: { folder: FolderType, index: number, DeleteFold
                   props.renameFolder(props.folder.id, newName);
                 }
                 setIsRename(false);
+                if (window.history.state?.modalOpen) {
+                  window.history.back();
+                }
               }
             }}
           />
