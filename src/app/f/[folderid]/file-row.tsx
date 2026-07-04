@@ -74,9 +74,8 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
 
         {isRename ? (
           <input
-
-            value={fileName}
-            onChange={(e) => setFileName(e.target.value)}
+            value={fileName.substring(0, fileName.lastIndexOf("."))}
+            onChange={(e) => setFileName(e.target.value + (hasExtension ? "." + fileExtension : ""))}
             className="p-2 h-8 w-full bg-transparent border-[1px] border-gray-500 rounded-md outline-none focus:outline-none"
             autoFocus
             onBlur={() => {

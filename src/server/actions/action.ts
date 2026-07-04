@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { MUTATIONS } from "../db/queries";
+import { MUTATIONS, QUERIES } from "../db/queries";
 
 export async function deleteFile(fileId: number) {
     const session = await auth();
