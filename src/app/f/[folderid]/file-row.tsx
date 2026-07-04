@@ -79,10 +79,12 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
             className="p-2 h-8 w-full bg-transparent border-[1px] border-gray-500 rounded-md outline-none focus:outline-none"
             autoFocus
             onBlur={() => {
+              setFileName(file.name);
               setIsRename(false);
             }}
             onKeyDown={(e) => {
               if (e.key === "Escape") {
+                setFileName(file.name);
                 setIsRename(false);
               }
               if (e.key === "Enter") {
