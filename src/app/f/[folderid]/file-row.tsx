@@ -153,12 +153,29 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
   )
 }
 
-export function FolderRow(props: { folder: FolderType, index: number, DeleteFolder: (folderId: number) => void }) {
+export function FolderRow(props: { folder: FolderType, index: number, DeleteFolder: (folderId: number) => void, renameFolder: (folderId: number, name: string) => void }) {
   const navigate = useRouter();
+  const [isRename, setIsRename] = useState(false);
+  const [folderName, setFolderName] = useState(props.folder.name);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setIsRename(false);
+    };
 
+    if (isRename) {
+      window.history.pushState({ modalOpen: true }, "");
+      window.addEventListener("popstate", handlePopState);
+    } else {
+      if (window.history.state?.modalOpen) {
+        window.history.back();
+      }
+    }
 
-
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isRename]);
 
   return (
     <li
@@ -166,13 +183,50 @@ export function FolderRow(props: { folder: FolderType, index: number, DeleteFold
     >
       {/* Name */}
       <div className="flex min-w-0 flex-1 items-center gap-3 sm:col-span-6">
-        <Link
-          href={`/f/${props.folder.id}`}
-          className="flex min-w-0 items-center gap-3 text-sm font-medium text-gray-200 transition-colors duration-150 hover:text-blue-400"
-        >
-          <FolderIcon size={20} className="shrink-0 text-amber-400/80" />
-          <span className="truncate">{props.folder.name}</span>
-        </Link>
+        <FolderIcon size={20} className="shrink-0 text-amber-400/80" />
+        {isRename ? (
+          <input
+            value={folderName}
+            onChange={(e) => setFolderName(e.target.value)}
+            className="p-2 h-8 w-full bg-transparent border-[1px] border-gray-500 rounded-md outline-none focus:outline-none text-sm"
+            autoFocus
+            onBlur={() => {
+              setFolderName(props.folder.name);
+              setIsRename(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setFolderName(props.folder.name);
+                setIsRename(false);
+              }
+              if (e.key === "Enter") {
+                const newName = folderName.trim() || props.folder.name;
+                if (newName !== props.folder.name) {
+                  props.renameFolder(props.folder.id, newName);
+                }
+                setIsRename(false);
+              }
+            }}
+          />
+        ) : (
+          <div className="flex items-center gap-2 min-w-0">
+            <Link
+              href={`/f/${props.folder.id}`}
+              className="flex min-w-0 items-center gap-3 text-sm font-medium text-gray-200 transition-colors duration-150 hover:text-blue-400 truncate"
+            >
+              <span className="truncate">{props.folder.name}</span>
+            </Link>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsRename(true);
+              }}
+              className="opacity-50 hover:opacity-100 hover:text-white ml-4 relative top-[2px] transition-opacity"
+            >
+              <NotebookPen size={16} className="text-yellow-500/80" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Type */}

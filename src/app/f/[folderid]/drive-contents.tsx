@@ -8,7 +8,7 @@ import { AuthButton } from "~/components/auth-button"
 import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
 import { useState, useEffect, useTransition, useOptimistic } from "react" // Added useEffect
-import { createFolderAction, deleteFile, deleteFolderAction, renameFileAction } from "~/server/actions/action"
+import { createFolderAction, deleteFile, deleteFolderAction, renameFileAction, renameFolderAction } from "~/server/actions/action"
 import { toast } from "sonner"
 
 export default function DriveContents(
@@ -25,7 +25,8 @@ export default function DriveContents(
 
   type FolderAction =
     | { type: "add"; name: string; currentFolderId: number }
-    | { type: "remove"; id: number };
+    | { type: "remove"; id: number }
+    | { type: "rename"; id: number; name: string };
 
   const [optimisticFolders, updateOptimisticFolders] = useOptimistic(
     props.folders,
@@ -43,6 +44,9 @@ export default function DriveContents(
           ];
         case "remove":
           return state.filter((f) => f.id !== action.id);
+        case "rename":
+          return state.map((f) => f.id === action.id ? { ...f, name: action.name } : f);
+
         default:
           return state;
       }
@@ -142,6 +146,13 @@ export default function DriveContents(
     });
   }
 
+  function handleFolderOptimisticRename(folderId: number, name: string) {
+    startTransition(async () => {
+      updateOptimisticFolders({ type: "rename", id: folderId, name });
+      await renameFolder(folderId, name);
+    });
+  }
+
   function handleFileOptimisticRename(fileId: number, name: string) {
     startTransition(async () => {
       updateOptimisticFiles({ type: "rename", id: fileId, name });
@@ -176,6 +187,16 @@ export default function DriveContents(
       navigate.refresh();
     } catch (error) {
       toast.error("Failed to rename file");
+    }
+  };
+
+  const renameFolder = async (id: number, name: string) => {
+    try {
+      await renameFolderAction(name, id);
+      toast.success(`Renamed folder`);
+      navigate.refresh();
+    } catch (error) {
+      toast.error("Failed to rename folder");
     }
   };
   return (
@@ -293,7 +314,7 @@ export default function DriveContents(
             </div>
             <ul>
               {optimisticFolders.map((folder, i) => (
-                <FolderRow key={folder.id} folder={folder} index={i} DeleteFolder={handleFolderOptimisticRemove} />
+                <FolderRow key={folder.id} folder={folder} index={i} DeleteFolder={handleFolderOptimisticRemove} renameFolder={handleFolderOptimisticRename} />
               ))}
               {optimisticFiles.map((file, index) => {
                 const lastFile = optimisticFiles.length - 1 === index;

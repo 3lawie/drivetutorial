@@ -55,3 +55,14 @@ export async function renameFileAction(name: string, id: number) {
     revalidatePath("/f/[folderId]", "page");
     return { success: true };
 }
+
+export async function renameFolderAction(name: string, id: number) {
+    const session = await auth();
+    if (!session.userId) {
+        return { error: "Unauthorized" }
+    }
+
+    await MUTATIONS.renameFolder(name, id, session.userId);
+    revalidatePath("/f/[folderId]", "page");
+    return { success: true };
+}

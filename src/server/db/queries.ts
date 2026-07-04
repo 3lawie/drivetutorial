@@ -213,5 +213,15 @@ export const MUTATIONS = {
 
         return file;
 
+    },
+    renameFolder: async (name: string, id: number, userId: string) => {
+        const folder = await db.update(foldersSchema).set({
+            name: name
+        }).where(and(
+            eq(foldersSchema.id, id),
+            eq(foldersSchema.ownerId, userId)
+        ))
+
+        return folder;
     }
 }
