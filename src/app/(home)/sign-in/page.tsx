@@ -22,7 +22,7 @@ export default function Home() {
         <p className="mb-8 text-center text-sm text-zinc-400">Sign in to access your secure cloud storage</p>
 
         <div className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 p-4 text-center transition-colors hover:bg-zinc-800">
-          <SignInButton forceRedirectUrl={"/"} />
+          <SignInButton forceRedirectUrl={"/drive"} />
         </div>
 
         <div className="mt-8 w-full">
