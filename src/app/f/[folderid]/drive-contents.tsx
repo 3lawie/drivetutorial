@@ -205,7 +205,7 @@ export default function DriveContents(
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-center md:justify-between">
           {/* Breadcrumbs - Scrollable on mobile */}
           <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-sm pb-2" aria-label="Breadcrumb">
-            {props.parents.length === 0 ? (
+            {props.parents.length <= 1 ? (
               <span className="flex shrink-0 items-center gap-1.5 rounded-md border border-gray-700/50 bg-surface-2 px-3 py-1.5 font-medium text-gray-300">
                 My Drive
               </span>
