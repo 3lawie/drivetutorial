@@ -196,4 +196,15 @@ export const MUTATIONS = {
             ));
         return deleteCall
     },
+    renameFile: async (name: string, id: number, userId: string) => {
+        const file = await db.update(filesSchema).set({
+            name: name
+        }).where(and(
+            eq(filesSchema.id, id),
+            eq(filesSchema.ownerId, userId)
+        ))
+
+        return file;
+
+    }
 }

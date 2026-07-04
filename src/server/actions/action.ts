@@ -10,18 +10,18 @@ export async function deleteFile(fileId: number) {
         return { error: "Unauthorized" }
     }
 
-    const result = await MUTATIONS.deleteFile(fileId, session.userId);
+    await MUTATIONS.deleteFile(fileId, session.userId);
     revalidatePath("/f/[folderId]", "page");
-    return result;
+    return { success: true };
 }
 
 export async function deleteFolderAction(id: number) {
     const user = await auth();
     if (!user.userId) throw new Error("Not authenticated");
 
-    const result = await MUTATIONS.deleteFolder(id, user.userId);
+    await MUTATIONS.deleteFolder(id, user.userId);
     revalidatePath("/f/[folderId]", "page");
-    return result;
+    return { success: true };
 }
 
 export async function createFolderAction(name: string, parentId: number) {
@@ -38,4 +38,15 @@ export async function createFolderAction(name: string, parentId: number) {
     });
 
     revalidatePath("/f/[folderId]", "page");
+}
+
+export async function renameFileAction(name: string, id: number) {
+    const session = await auth();
+    if (!session.userId) {
+        return { error: "Unauthorized" }
+    }
+
+    await MUTATIONS.renameFile(name, id, session.userId);
+    revalidatePath("/f/[folderId]", "page");
+    return { success: true };
 }

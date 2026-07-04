@@ -8,9 +8,8 @@ import { AuthButton } from "~/components/auth-button"
 import { UploadButton } from "~/components/uploadthing"
 import { useRouter } from "next/navigation"
 import { useState, useEffect, useTransition, useOptimistic } from "react" // Added useEffect
-import { createFolderAction, deleteFile, deleteFolderAction } from "~/server/actions/action"
+import { createFolderAction, deleteFile, deleteFolderAction, renameFileAction } from "~/server/actions/action"
 import { toast } from "sonner"
-import { start } from "repl"
 
 export default function DriveContents(
   props: {
@@ -52,7 +51,9 @@ export default function DriveContents(
     }
   );
 
-  type FileAction = { type: "remove"; id: number };
+  type FileAction =
+    { type: "remove"; id: number }
+    | { type: "rename"; id: number; name: string };
 
   const [optimisticFiles, updateOptimisticFiles] = useOptimistic(
     props.files,
@@ -60,6 +61,8 @@ export default function DriveContents(
       switch (action.type) {
         case "remove":
           return state.filter((f) => f.id !== action.id);
+        case "rename":
+          return state.map((f) => f.id === action.id ? { ...f, name: action.name } : f);
         default:
           return state;
       }
@@ -140,6 +143,13 @@ export default function DriveContents(
     });
   }
 
+  function handleFileOptimisticRename(fileId: number, name: string) {
+    startTransition(async () => {
+      updateOptimisticFiles({ type: "rename", id: fileId, name });
+      await renameFile(fileId, name);
+    });
+  }
+
   const handleDeleteFile = async (fileId: number) => {
     try {
       await deleteFile(fileId);
@@ -159,6 +169,16 @@ export default function DriveContents(
       toast.error("Failed to delete folder");
     }
   };
+
+  const renameFile = async (id: number, name: string) => {
+    try {
+      await renameFileAction(name, id);
+      toast.success(`Renamed file`);
+      navigate.refresh();
+    } catch (error) {
+      toast.error("Failed to rename file");
+    }
+  };
   return (
     <div className="min-h-screen bg-surface-0 text-gray-100 p-4 md:p-8 lg:p-10">
       <div className="mx-auto max-w-5xl">
@@ -168,15 +188,15 @@ export default function DriveContents(
           {/* Breadcrumbs - Scrollable on mobile */}
           <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-sm pb-2" aria-label="Breadcrumb">
             <Link
-              href={`/f/2251799813685249`}
+              href={`/f/${props.parents[0]?.id ?? props.currentFolderId}`}
               className="flex shrink-0 items-center gap-1.5 rounded-md border border-gray-700/50 bg-surface-2 px-3 py-1.5 font-medium text-gray-300 transition-all duration-200 hover:bg-surface-3 hover:text-white"
             >
               My Drive
             </Link>
-            {props.parents.map((folder, i) => (
+            {props.parents.slice(1).map((folder, i) => (
               <div key={folder.id} className="flex shrink-0 items-center">
                 <ChevronRight className="mx-1 text-gray-600" size={14} />
-                {i === props.parents.length - 1 ? (
+                {i === props.parents.slice(1).length - 1 ? (
                   <span className="px-2 py-1 font-medium text-gray-100">
                     {folder.name}
                   </span>
@@ -283,7 +303,9 @@ export default function DriveContents(
                   ))}
                   {optimisticFiles.map((file, index) => {
                     const lastFile = optimisticFiles.length - 1 === index;
-                    return <FileRow key={file.id} file={file} lastFile={lastFile} index={optimisticFolders.length + index} DeleteFile={handleFileOptimisticRemove} />;
+                    return <FileRow key={file.id} file={file} lastFile={lastFile}
+                      index={optimisticFolders.length + index} DeleteFile={handleFileOptimisticRemove}
+                      renameFile={handleFileOptimisticRename} />;
                   })}
                 </ul>
               </div>

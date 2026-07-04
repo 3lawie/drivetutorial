@@ -1,12 +1,12 @@
 "use client"
 
 import { type FolderType, type FileType } from "~/lib/mock-data"
-import { Folder as FolderIcon, Trash2Icon, FileText, Image as ImageIcon, FileSpreadsheet, Film, Music, Archive, File } from "lucide-react"
+import { Folder as FolderIcon, Trash2Icon, FileText, Image as ImageIcon, FileSpreadsheet, Film, Music, Archive, File, Pencil, NotebookPen } from "lucide-react"
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { deleteFile, deleteFolderAction } from "~/server/actions/action";
 import { useRouter } from "next/navigation";
-import { useOptimistic, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 /** Format bytes into a human-readable string */
@@ -37,8 +37,31 @@ function getFileIcon(name: string) {
   return <File size={20} className={`${iconClass} text-gray-400`} />;
 }
 
-export function FileRow(props: { file: FileType, lastFile: boolean, index: number, DeleteFile: (fileId: number) => void }) {
+export function FileRow(props: { file: FileType, lastFile: boolean, index: number, DeleteFile: (fileId: number) => void, renameFile: (fileId: number, name: string) => void }) {
   const { file } = props;
+  const [isRename, setIsRename] = useState(false);
+  const [fileName, setFileName] = useState(file.name);
+  // ─── Android Back Button Listener ───
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      setIsRename(false);
+    };
+
+    if (isRename) {
+      // Push a fake state into history when modal opens
+      window.history.pushState({ modalOpen: true }, "");
+      window.addEventListener("popstate", handlePopState);
+    } else {
+      window.removeEventListener("popstate", handlePopState);
+    }
+
+    // Cleanup listener when component unmounts or modal closes
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isRename]);
+
+  const fileExtension = file.name.split(".").pop()?.toLowerCase() ?? "";
 
   return (
     <li
@@ -47,13 +70,49 @@ export function FileRow(props: { file: FileType, lastFile: boolean, index: numbe
       {/* Name — always visible */}
       <div className="flex min-w-0 flex-1 items-center gap-3 sm:col-span-6">
         {getFileIcon(file.name)}
-        <a
-          href={file.url}
-          target="_blank"
-          className="truncate text-sm font-medium text-gray-200 transition-colors duration-150 hover:text-blue-400"
-        >
-          {file.name}
-        </a>
+
+        {isRename ? (
+          <input
+
+            value={fileName}
+            onChange={(e) => setFileName(e.target.value)}
+            className="p-2 h-8 w-full bg-transparent border-[1px] border-gray-500 rounded-md outline-none focus:outline-none"
+            autoFocus
+            onBlur={() => {
+              setIsRename(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setIsRename(false);
+              }
+              if (e.key === "Enter") {
+                props.renameFile(file.id, fileName.split(".")[0] + "." + fileExtension);
+                setIsRename(false);
+              }
+
+            }}
+          />
+        ) : (
+          <div className="flex items-center gap-2">
+            <a
+              href={file.url}
+              target="_blank"
+              className="truncate text-sm font-medium text-gray-200 transition-colors duration-150 hover:text-amber-500/80"
+            >
+              {file.name}
+              <button
+                onClick={(e) => {
+                  e.preventDefault(); // Prevents the link from opening
+                  setIsRename(true);
+                }}
+                className="opacity-50 hover:opacity-100 hover:text-white ml-4 relative top-[2px] transition-opacity"
+              >
+                <NotebookPen size={16} className="text-yellow-500/80" />
+              </button>
+
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Type — hidden on mobile */}
